@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity" >
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="125dp"
+        android:text="Try the login (Username:seminole, Password:dunk (error check enabled)" />
+
+    <CheckBox
+        android:id="@+id/checkBox1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/UI_CredSubmit"
+        android:layout_alignLeft="@+id/UI_EditFSUID"
+        android:layout_marginBottom="30dp"
+        android:text="Stay signed in" />
+
+    <Button
+        android:id="@+id/UI_CredSubmit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/textView1"
+        android:layout_alignRight="@+id/UI_EditFSUPass"
+        android:layout_marginBottom="96dp"
+        android:text="Try Me" />
+
+    <EditText
+        android:id="@+id/UI_EditFSUID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/UI_EditFSUPass"
+        android:layout_centerHorizontal="true"
+        android:ems="10"
+        android:hint="FSUID" />
+
+    <EditText
+        android:id="@+id/UI_EditFSUPass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/checkBox1"
+        android:layout_alignLeft="@+id/UI_EditFSUID"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+</RelativeLayout>
