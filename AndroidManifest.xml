@@ -26,6 +26,14 @@
             android:name="com.dunksoftware.seminoletix.LoginActivity"
             android:label="@string/title_activity_login" >
         </activity>
+        <activity
+            android:name="com.dunksoftware.seminoletix.ListActivity"
+            android:label="@string/title_activity_list"
+            android:parentActivityName="MenuActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="MenuActivity" />
+        </activity>
     </application>
 
 </manifest>
