@@ -72,6 +72,6 @@ db.once('open', function callback() {
 			}
 		});
 	});
-	app.listen(8080);
-	console.log('Seminole Tix REST Server listening on port 8080');
+	app.listen(3000, "0.0.0.0");
+	console.log('Seminole Tix REST Server listening on port 3000');
 });
