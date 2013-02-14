@@ -122,17 +122,27 @@ db.once('open', function callback() {
 			if (req.body.cardNum && req.body.pin && req.body.email && req.body.password) {
 				User.findOne({cardNum: req.body.cardNum}, function(err, user) {
 					if (user && !user.registered) {
-						if (check(req.body.email).isEmail()) {
-							user.userId = req.body.email.match(/[^@]+/)[0];
-							user.password = req.body.password;
-							user.email = req.body.email;
-							user.registered = true;
-							user.save();
-							res.json({success: true});
+						if (req.body.pin == user.pin) {
+							if (check(req.body.email).isEmail()) {
+								user.userId = req.body.email.match(/[^@]+/)[0];
+								user.password = req.body.password;
+								user.email = req.body.email;
+								user.registered = true;
+								user.save(function(error) {
+									if (error) {
+										res.json({success: false, message: error.err})
+									}
+									else
+										res.json({success: true})
+								});
+							}
+							else {
+								res.json({success: false, message: 'Invalid email.'});
+							}
 						}
 						else {
-							res.json({success: false, message: 'Invalid email.'});
-						}
+							res.json({success: false, message: 'Invalid pin.'});
+						}						
 						
 					} else {
 						if (!user)
@@ -146,6 +156,19 @@ db.once('open', function callback() {
 				res.send(500, 'Missing arguments. Need cardNum, pin, desired email, and desired password');
 			}
 		}
+	});
+
+	app.get('/users', function(req, res) {
+		User.find(function(err, users) {
+			if (err)
+			{
+				console.log(err);
+			}
+			else
+			{
+				res.json(users);
+			}
+		});
 	});
 
 	app.get('/user/:id', loadUser, function(req, res) {

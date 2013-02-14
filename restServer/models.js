@@ -2,14 +2,14 @@ mongoose = require('mongoose');
 var crypto = require('crypto');
 
 var userSchema = new mongoose.Schema({
-	userId: {type: String, index: true, unique: true},
+	userId: {type: String, index: true, unique: true, sparse: true},
 	hashedPassword: String,
 	salt: String,
 	pin: String,
 	registered: Boolean,	
 	name: { first: String, last: String },
 	cardNum: {type: String, index: true, unique: true},
-	email: {type: String, index: true, unique: true},
+	email: {type: String, index: true, unique: true, sparse: true},
 	tickets: [{game_id: mongoose.Schema.ObjectId, confirmationId: String, seat: String, row: String}]
 });
 
