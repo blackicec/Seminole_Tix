@@ -146,14 +146,14 @@ db.once('open', function callback() {
 						
 					} else {
 						if (!user)
-							res.send(500, 'No user found with that card number');
+							res.json({success: false, message: 'No user found with that card number'});
 						else 
-							res.send(500, 'User already registered');
+							res.json({success: false, message: 'User already registered'});
 					}
 				});
 			}
 			else {
-				res.send(500, 'Missing arguments. Need cardNum, pin, desired email, and desired password');
+				res.json({success: false, message: 'Missing arguments. Need cardNum, pin, desired email, and desired password'});
 			}
 		}
 	});

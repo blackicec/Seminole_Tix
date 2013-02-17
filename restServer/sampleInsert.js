@@ -7,7 +7,7 @@ for (var i = 0; i < 100; i++)
         pin: '1234',
         registered: false,
         name: {first: 'John', last: 'Doe'},
-        cardNum: i
+        cardNum: i.toString()
     };
     db.users.insert(user);
 }
