@@ -14,5 +14,6 @@
     <string name="repassHint">confirm password</string>
     <string name="signinButtonText">Sign In</string>
     <string name="registerButtonText">Register</string>
-
+    <string name="title_activity_list">ListActivity</string>
+    
 </resources>
