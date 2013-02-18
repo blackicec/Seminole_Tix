@@ -1,95 +1,100 @@
-<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/TableLayout1"
+    android:id="@+id/scrollView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center_horizontal"
-    android:textAlignment="center"
-    tools:context=".RegisterActivity" >
+    android:layout_height="match_parent" >
 
-    <TextView
-        android:id="@+id/textView1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical|center_horizontal"
-        android:gravity="center"
-        android:text="Registration"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+    <TableLayout
+        android:id="@+id/TableLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:textAlignment="center"
+        tools:context=".RegisterActivity" >
 
-    <EditText
-        android:id="@+id/UI_EditCardNum"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/cardHint"
-        android:inputType="number" >
-
-        <requestFocus />
-    </EditText>
-
-    <EditText
-        android:id="@+id/UI_EditPIN"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/pinHint"
-        android:inputType="textPassword" />
-
-    <EditText
-        android:id="@+id/UI_EditEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:ems="10"
-        android:hint="@string/emailHint"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/UI_EditPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/passHint"
-        android:inputType="textPassword" />
-
-    <EditText
-        android:id="@+id/UI_EditConfirmPassword"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/repassHint"
-        android:inputType="textPassword" />
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/UI_ButtonConfirm"
+        <TextView
+            android:id="@+id/textView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/submitButton" />
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:gravity="center"
+            android:text="Registration"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <Button
-            android:id="@+id/UI_ButtonClear"
+        <EditText
+            android:id="@+id/UI_EditCardNum"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/clearButton" />
+            android:ems="10"
+            android:hint="@string/cardHint"
+            android:inputType="number" >
 
-    </RelativeLayout>
+            <requestFocus />
+        </EditText>
 
-    <TextView
-        android:id="@+id/UI_TextMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
-        android:gravity="center"
-        android:text="PlaceHolder"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        <EditText
+            android:id="@+id/UI_EditPIN"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/pinHint"
+            android:inputType="textPassword" />
 
-</TableLayout>
+        <EditText
+            android:id="@+id/UI_EditEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:ems="10"
+            android:hint="@string/emailHint"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/UI_EditPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/passHint"
+            android:inputType="textPassword" />
+
+        <EditText
+            android:id="@+id/UI_EditConfirmPassword"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/repassHint"
+            android:inputType="textPassword" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp" >
+
+            <Button
+                android:id="@+id/UI_ButtonConfirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/submitButton" />
+
+            <Button
+                android:id="@+id/UI_ButtonClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:text="@string/clearButton" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/UI_TextMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </TableLayout>
+
+</ScrollView>
