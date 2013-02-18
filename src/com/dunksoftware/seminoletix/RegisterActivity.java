@@ -10,6 +10,17 @@ public class RegisterActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
+		
+	}
+	
+	/***
+	 * This function simply checks each EditText box to ensure that
+	 * the element does not contain an empty string
+	 * @return false -> if at least one box is empty;
+	 * true -> is all box entries have some data
+	 */
+	private boolean verifyEntries() {
+		return false;
 	}
 
 	@Override

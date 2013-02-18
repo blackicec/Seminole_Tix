@@ -7,6 +7,7 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.content.ContentProvider;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
@@ -40,14 +41,19 @@ public class LoginActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		
+		// Shared preferences still under construction
+		mSettings = getSharedPreferences(PREFS_NAME, 0);
+		mSettings.getString(USER_NAME, ERROR_STRING);
+		
+		// link widgets to variables 
 		editUsername = (EditText)findViewById(R.id.UI_EditFSUID);
 		editPassword = (EditText)findViewById(R.id.UI_EditFSUPass);
 		
-		mSettings = getSharedPreferences(PREFS_NAME, 0);
+		mRegisterBtn = (Button)findViewById(R.id.UI_registerBtn);
+		mLoginBtn = (Button)findViewById(R.id.UI_signinBtn);
 		
-		mSettings.getString(USER_NAME, ERROR_STRING);
-		
-		((Button)findViewById(R.id.UI_signinBtn)).setOnClickListener(
+		// set anonymous onclick listeners for registration and login buttons
+		mLoginBtn.setOnClickListener(
 				new OnClickListener() {
 			
 			@Override
@@ -88,7 +94,18 @@ public class LoginActivity extends Activity {
 				}
 			}
 		});
-	}
+		
+		mRegisterBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View arg0) {
+				Intent nextActivityIntent = 
+						new Intent(getApplicationContext(), RegisterActivity.class);
+				
+				startActivity(nextActivityIntent);
+			}
+		});
+	} // End of onCreate function
 	
 	private boolean validate( JSONObject[] jsonObjects, String id, String pin ) {
 		

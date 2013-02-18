@@ -15,5 +15,7 @@
     <string name="signinButtonText">Sign In</string>
     <string name="registerButtonText">Register</string>
     <string name="title_activity_list">ListActivity</string>
+    <string name="clearButton">Clear Form</string>
+    <string name="submitButton">Submit Form</string>
     
 </resources>
