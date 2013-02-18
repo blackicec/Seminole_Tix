@@ -1,6 +1,13 @@
 package com.dunksoftware.seminoletix;
 
+import java.util.concurrent.ExecutionException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.content.ContentProvider;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -11,11 +18,22 @@ import android.widget.TextView;
 
 public class LoginActivity extends Activity {
 
+	public static final String PREFS_NAME = "TixSettingsFile";
+	public static final String USER_NAME = "username";
+	public static final String ERROR_STRING = "error";
+	
+	private JSONObject[] jsonObjects;
+	
 	EditText editUsername,
 		editPassword;
 	
+	private Button mRegisterBtn,
+		mLoginBtn;
+	
 	String mUserResponse,
 		mPassResponse;
+	
+	SharedPreferences mSettings;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,36 +43,76 @@ public class LoginActivity extends Activity {
 		editUsername = (EditText)findViewById(R.id.UI_EditFSUID);
 		editPassword = (EditText)findViewById(R.id.UI_EditFSUPass);
 		
-		/* 
-		 * Another dirty shortcut (One time use variable and
-		 * One time use event handler
-		 */
-		((Button)findViewById(R.id.UI_CredSubmit)).setOnClickListener(
+		mSettings = getSharedPreferences(PREFS_NAME, 0);
+		
+		mSettings.getString(USER_NAME, ERROR_STRING);
+		
+		((Button)findViewById(R.id.UI_signinBtn)).setOnClickListener(
 				new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				boolean NameResult,
-					PassResult, blah;
+					PassResult;
 				
 				mUserResponse = editUsername.getText().toString();
 				mPassResponse = editPassword.getText().toString();
 				
-				NameResult = mUserResponse.equals("seminole");
-				PassResult = mPassResponse.equals("dunk");
+				TextView message = (TextView)findViewById(R.id.UI_Message);
+				Handlers h = new Handlers();
 				
-				
-				if( NameResult && PassResult ) {
-					((TextView)findViewById(R.id.UI_TextResult)).
-						setText("Successful Login!!!!");
-				}
-				
-				else {
-					((TextView)findViewById(R.id.UI_TextResult)).
-						setText("Failed to Log into the database");
+				h.execute();
+				try {
+					// Retrieve the array of JSON objects
+					jsonObjects = h.get();
+					
+					// attempt to validate entries
+					boolean response = validate(jsonObjects, mUserResponse, "1234");
+					
+					if( response )
+						message.setText("True");
+					else
+						message.setText("False");
+					
+					UserControl.RegisterUser register = new UserControl.RegisterUser();
+					register.execute();
+					
+					message.setText(register.get());
+					
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		});
+	}
+	
+	private boolean validate( JSONObject[] jsonObjects, String id, String pin ) {
+		
+		for( int i = 0; i < jsonObjects.length; ++i ) {
+			try {
+				if(id.equals(jsonObjects[i].getString("_id")))
+					return true;
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		
+		SharedPreferences.Editor editor = mSettings.edit();
+		
+		editor.putString(USER_NAME, mUserResponse);
+		editor.commit();
 	}
 
 	@Override
@@ -63,5 +121,6 @@ public class LoginActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_login, menu);
 		return true;
 	}
-
+	
+	/* This section below will be designed to validate login info */
 }
