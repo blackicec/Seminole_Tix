@@ -68,7 +68,7 @@ public class RegisterActivity extends Activity {
 					
 					// check email for format (contains '@', .com)
 					String email = EditEmail.getText().toString();
-					if( !email.contains("@") || !email.endsWith(".com")) {
+					if( !email.contains("@")) {
 						formOK = false;
 						
 						ErrorMessage.setText("Expected email format: \"user@server_name.com\"");
