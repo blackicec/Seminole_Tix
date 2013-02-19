@@ -25,16 +25,19 @@ public class LoginActivity extends Activity {
 	
 	private JSONObject[] jsonObjects;
 	
-	EditText editUsername,
+	private EditText editUsername,
 		editPassword;
 	
 	private Button mRegisterBtn,
 		mLoginBtn;
 	
-	String mUserResponse,
+	private String mUserResponse,
 		mPassResponse;
 	
-	SharedPreferences mSettings;
+	private UserControl.GetUsers mGetUsers;
+	
+	private SharedPreferences mSettings;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +55,8 @@ public class LoginActivity extends Activity {
 		mRegisterBtn = (Button)findViewById(R.id.UI_registerBtn);
 		mLoginBtn = (Button)findViewById(R.id.UI_signinBtn);
 		
+		mGetUsers = new UserControl.GetUsers();
+		
 		// set anonymous onclick listeners for registration and login buttons
 		mLoginBtn.setOnClickListener(
 				new OnClickListener() {
@@ -64,13 +69,12 @@ public class LoginActivity extends Activity {
 				mUserResponse = editUsername.getText().toString();
 				mPassResponse = editPassword.getText().toString();
 				
-				TextView message = (TextView)findViewById(R.id.UI_Message);
-				Handlers h = new Handlers();
+				TextView message = (TextView)findViewById(R.id.UI_Message);		
 				
-				h.execute();
+				mGetUsers.execute();
 				try {
 					// Retrieve the array of JSON objects
-					jsonObjects = h.get();
+					jsonObjects = mGetUsers.get();
 					
 					// attempt to validate entries
 					boolean response = validate(jsonObjects, mUserResponse, "1234");
