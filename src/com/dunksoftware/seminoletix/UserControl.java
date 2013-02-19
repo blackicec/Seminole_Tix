@@ -31,10 +31,10 @@ public class UserControl {
 	 */
 	public static class RegisterUser extends AsyncTask<Void, Void, String> {
 		private String CardNumber,
-			PIN,
-			Email,
-			Password;
-		
+		PIN,
+		Email,
+		Password;
+
 		/***
 		 * 
 		 * @param card -> FSU card number to be registered
@@ -44,42 +44,44 @@ public class UserControl {
 		 */
 		public RegisterUser(String card, String pin, String email,
 				String password) {
-			
+
 			CardNumber = card;
 			PIN = pin;
 			Email = email;
 			Password = password;
 		}
-		
+
 		@Override
 		protected String doInBackground(Void... arg0) {
-			
-			 // Create a new HttpClient and Post Header
-		    HttpClient httpclient = new DefaultHttpClient();
-		    HttpPost httppost = new HttpPost(Constants.UsersAddress);
 
-		    try {
-		        // Add your data
-		        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-		        
-		        nameValuePairs.add(new BasicNameValuePair("cardNum", CardNumber));
-		        nameValuePairs.add(new BasicNameValuePair("pin", PIN));
-		        nameValuePairs.add(new BasicNameValuePair("email", Email));
-		        nameValuePairs.add(new BasicNameValuePair("password", Password));
-		        
-		        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			HttpResponse response = null;
 
-		        // Execute HTTP Post Request
-		        HttpResponse response = httpclient.execute(httppost);
-				
-		        // If the response does not enclose an entity, there is no need
+			// Create a new HttpClient and Post Header
+			HttpClient httpclient = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost(Constants.UsersAddress);
+
+			try {
+				// Add your data
+				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+				nameValuePairs.add(new BasicNameValuePair("cardNum", CardNumber));
+				nameValuePairs.add(new BasicNameValuePair("pin", PIN));
+				nameValuePairs.add(new BasicNameValuePair("email", Email));
+				nameValuePairs.add(new BasicNameValuePair("password", Password));
+
+				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+				// Execute HTTP Post Request
+				response = httpclient.execute(httppost);
+
+				// If the response does not enclose an entity, there is no need
 				// to worry about connection release
-		        HttpEntity entity = response.getEntity();
+				HttpEntity entity = response.getEntity();
 
 				if (entity != null) {
 					// A Simple JSON Response Read
 					InputStream instream = entity.getContent();
-					
+
 					try {
 						JSONArray jsonArray = new JSONArray(Constants.convertStreamToString(instream));
 						return jsonArray.toString();
@@ -88,19 +90,19 @@ public class UserControl {
 						e.printStackTrace();
 					}
 				}
-		        
-		        return Integer.toString(response.getStatusLine().getStatusCode());
-		        
-		    } catch (ClientProtocolException e) {
-		        // TODO Auto-generated catch block
-		    } catch (IOException e) {
-		        // TODO Auto-generated catch block
-		    }
-			return null;
+
+				return Integer.toString(response.getStatusLine().getStatusCode());
+
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+			}
+			return Integer.toString(response.getStatusLine().getStatusCode());
 		}
-		
+
 	}
-	
+
 	/***
 	 * comment (null return check)
 	 * @author blackice
@@ -110,10 +112,10 @@ public class UserControl {
 
 		@Override
 		protected JSONObject[] doInBackground(Void... params) {
-		
+
 			// create an array of json objects that will be returned
 			JSONObject[] jsonObjects = null;
-			
+
 			// Create the httpclient
 			HttpClient httpclient = new DefaultHttpClient();
 
@@ -141,9 +143,9 @@ public class UserControl {
 					if (entity != null) {
 						// A Simple JSON Response Read
 						InputStream instream = entity.getContent();
-						
+
 						JSONArray jsonArray = new JSONArray(Constants.convertStreamToString(instream));
-						
+
 						// allocate space for the obect array
 						jsonObjects = new JSONObject[jsonArray.length()];
 						for( int i = 0; i < jsonArray.length(); ++i) {
@@ -170,10 +172,10 @@ public class UserControl {
 				// JSON errors
 				returnString = "JSON failed; " + ex.getMessage();
 			}
-			
+
 			return jsonObjects;
 		}
-		
+
 	}
-	
+
 }
