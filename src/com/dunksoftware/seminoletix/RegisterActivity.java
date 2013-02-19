@@ -1,5 +1,7 @@
 package com.dunksoftware.seminoletix;
 
+import java.util.concurrent.ExecutionException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -93,6 +95,16 @@ public class RegisterActivity extends Activity {
 						registerUser = new UserControl.RegisterUser(CardNumber, PIN, Email, Password);
 						
 						registerUser.execute();
+						
+						try {
+							ErrorMessage.setText( registerUser.get() );
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 				else {
