@@ -17,7 +17,15 @@ public class RegisterActivity extends Activity {
 		EditPassword,
 		EditConfirmPass;
 	
+	private String CardNumber,
+		PIN,
+		Email,
+		Password;
+	
 	private TextView ErrorMessage;
+	
+	// This variable handles user registration after form validation
+	private UserControl.RegisterUser registerUser;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -43,11 +51,12 @@ public class RegisterActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				if( verifyEntries() ) {
+					
 					// clear error message
 					ErrorMessage.setText("");
 					
-					String confirmPass = EditConfirmPass.getText().toString();
 					// compare two passwords for equality
+					String confirmPass = EditConfirmPass.getText().toString();
 					if( !EditPassword.getText().toString().equals(confirmPass) ) {
 						formOK = false;
 						
@@ -57,8 +66,8 @@ public class RegisterActivity extends Activity {
 						EditConfirmPass.setText("");
 					}
 					
-					String email = EditEmail.getText().toString();
 					// check email for format (contains '@', .com)
+					String email = EditEmail.getText().toString();
 					if( !email.contains("@") || !email.endsWith(".com")) {
 						formOK = false;
 						
@@ -66,18 +75,28 @@ public class RegisterActivity extends Activity {
 					}
 					
 					// check card number length
-					if(EditCardNumber.getText().length() != 
+					/*if(EditCardNumber.getText().length() != 
 							Constants.CARD_NUMBER_LENGTH) {
 						formOK = false;
 						
 						ErrorMessage.setText("Incorrect length on FSU Card Number");
-					}
-					
+					} Commented out for testing purposes only */
+						
 					if( formOK ) {
-						// then POST to site
+						// capture data from the form
+						CardNumber = EditCardNumber.getText().toString();
+						PIN = EditPIN.getText().toString();
+						Email = EditEmail.getText().toString();
+						Password = EditPassword.getText().toString();
+						
+						// . . . then POST to site
+						registerUser = new UserControl.RegisterUser(CardNumber, PIN, Email, Password);
+						
+						registerUser.execute();
 					}
 				}
 				else {
+					
 					ErrorMessage.setText("Error: All fields are required to have a value.");
 				}
 			}

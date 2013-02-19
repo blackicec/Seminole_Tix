@@ -30,7 +30,27 @@ public class UserControl {
 	 *
 	 */
 	public static class RegisterUser extends AsyncTask<Void, Void, String> {
-
+		private String CardNumber,
+			PIN,
+			Email,
+			Password;
+		
+		/***
+		 * 
+		 * @param card -> FSU card number to be registered
+		 * @param pin -> required FSU pin
+		 * @param email -> FSU outlook email address
+		 * @param password -> User's password of choice
+		 */
+		public RegisterUser(String card, String pin, String email,
+				String password) {
+			
+			CardNumber = card;
+			PIN = pin;
+			Email = email;
+			Password = password;
+		}
+		
 		@Override
 		protected String doInBackground(Void... arg0) {
 			
@@ -42,10 +62,10 @@ public class UserControl {
 		        // Add your data
 		        List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 		        
-		        nameValuePairs.add(new BasicNameValuePair("cardNum", "86"));
-		        nameValuePairs.add(new BasicNameValuePair("pin", "1234"));
-		        nameValuePairs.add(new BasicNameValuePair("email", "ed10@my.fsu.edu"));
-		        nameValuePairs.add(new BasicNameValuePair("password", "1234"));
+		        nameValuePairs.add(new BasicNameValuePair("cardNum", CardNumber));
+		        nameValuePairs.add(new BasicNameValuePair("pin", PIN));
+		        nameValuePairs.add(new BasicNameValuePair("email", Email));
+		        nameValuePairs.add(new BasicNameValuePair("password", Password));
 		        
 		        httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 

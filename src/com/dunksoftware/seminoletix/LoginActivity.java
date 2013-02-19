@@ -84,10 +84,10 @@ public class LoginActivity extends Activity {
 					else
 						message.setText("False");
 					
-					UserControl.RegisterUser register = new UserControl.RegisterUser();
-					register.execute();
+					//registerUser = new UserControl.RegisterUser();
+					//registerUser.execute();
 					
-					message.setText(register.get());
+					//message.setText(registerUser.get());
 					
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
