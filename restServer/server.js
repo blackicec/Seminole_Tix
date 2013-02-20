@@ -3,6 +3,9 @@ var express = require('express'),
 	models = require('./models.js'),
 	Session = require('connect-mongodb'),
 	check = require('validator').check,
+	https = require('https'),
+	http = require('http'),
+	fs = require('fs'),
 	User = models.User,
 	Game = models.Game,
 	LoginToken = models.LoginToken;
@@ -11,6 +14,10 @@ mongoose.connect('localhost', 'dunk', function(err){
 	if(err) throw err;
 });
 
+var options = {
+  key: fs.readFileSync('/etc/ssl/self-signed/server.key'),
+  cert: fs.readFileSync('/etc/ssl/self-signed/server.crt')
+};
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -215,6 +222,7 @@ db.once('open', function callback() {
 			}
 		});
 	});
-	app.listen(3000, '0.0.0.0');
+	http.createServer(app).listen(3000);
+	https.createServer(options, app).listen(4430);
 	console.log('Seminole Tix REST Server listening on port 3000');
 });
