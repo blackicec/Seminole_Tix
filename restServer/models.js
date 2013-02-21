@@ -23,7 +23,7 @@ userSchema.methods.makeSalt = function() {
 	return Math.round((new Date().valueOf() * Math.random())) + '';
 };
 userSchema.methods.encryptPassword = function(password) {
-	return crypto.createHmac('sha1', this.salt).update(password).digest('hex');
+	return crypto.createHmac('sha512', this.salt).update(password).digest('hex');
 };
 userSchema.methods.authenticate = function(plainText) {
 	return this.encryptPassword(plainText) === this.hashedPassword;
