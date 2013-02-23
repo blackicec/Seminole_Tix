@@ -222,7 +222,7 @@ db.once('open', function callback() {
 			}
 		});
 	});
-	http.createServer(app).listen(3000);
-	https.createServer(options, app).listen(4430);
-	console.log('Seminole Tix REST Server listening on port 3000');
+	http.createServer(app).listen(80);
+	https.createServer(options, app).listen(443);
+	console.log('Seminole Tix REST Server listening on port 80 and 443');
 });
