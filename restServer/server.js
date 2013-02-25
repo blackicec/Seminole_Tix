@@ -178,17 +178,8 @@ db.once('open', function callback() {
 		});
 	});
 
-	app.get('/user/:id', loadUser, function(req, res) {
-		User.find({userId: req.params.id}, function(err, user) {
-			if (err)
-			{
-				console.log(err);
-			}
-			else
-			{
-				res.json(user);
-			}
-		});
+	app.get('/user', loadUser, function(req, res) {
+		res.json(req.currentUser);
 	});
 
 	// Games
@@ -205,11 +196,13 @@ db.once('open', function callback() {
 		});
 	});
 
-	app.get('/game/:id', function(req, res) {
+	app.get('/game/:id', loadUser, function(req, res) {
 		Game.findOne({_id: mongoose.Types.ObjectId(req.params.id)}, function(err, game) {
 			if (err)
 			{
 				console.log(err);
+				res.json(err);
+
 			}
 			else
 			{
@@ -222,6 +215,60 @@ db.once('open', function callback() {
 			}
 		});
 	});
+
+	app.post('/game/:id', loadUser, function(req, res) {
+		Game.findOne({_id: mongoose.Types.ObjectId(req.params.id)}, function (err, game) {
+			if (err)
+			{
+				console.log(err);
+				res.json(err);
+			}
+			else
+			{
+				if (game.seatsLeft == 0)
+				{
+					res.json(
+					{
+						success: false,
+						message: 'Game is full'
+					});
+				}
+				// Check if user has already reserved a ticket
+				else
+				{
+					for (ticket in req.currentUser.tickets)
+					{
+						if (game._id.equals(req.currentUser.tickets[ticket].game_id)){
+							res.json(
+							{
+								success: false,
+								message: 'Already have a ticket for this game'
+							});
+							return;
+						}
+					}
+
+					game.seatsLeft -= 1;
+					game.save();
+					var newTicket = {
+						game_id: game._id,
+						confirmationId: '751263',
+						seat: 'B',
+						row: '42'
+					};
+					var newTickets = req.currentUser.tickets;
+					newTickets.push(newTicket);
+					req.currentUser.tickets = newTickets;
+					req.currentUser.save();
+					res.json(
+					{
+						success: true
+					});
+				}
+			}
+		});
+	});
+
 	http.createServer(app).listen(80);
 	https.createServer(options, app).listen(443);
 	console.log('Seminole Tix REST Server listening on port 80 and 443');
