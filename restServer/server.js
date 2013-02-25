@@ -109,7 +109,7 @@ db.once('open', function callback() {
 		}
 	});
 
-	app.del('/logout', loadUser, function(req, res) {
+	app.get('/logout', loadUser, function(req, res) {
 		if (req.session) {
 			LoginToken.remove({ userId: req.currentUser.userId }, function() {});
     		res.clearCookie('logintoken');
