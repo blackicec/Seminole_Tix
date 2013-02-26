@@ -117,7 +117,9 @@ public class UserControl {
 					// code here for a response other than 200.  A response 200 means the webpage was ok
 					// Other codes include 404 - not found, 301 - redirect etc...
 					// Display the response line.
-					returnValue = "Unable to load page - " + response.getStatusLine();
+					returnValue = "Unable to load page - " + "Code: " + 
+							Integer.toString(response.getStatusLine().getStatusCode()) +
+							response.getStatusLine();
 					return returnValue;
 				}
 
