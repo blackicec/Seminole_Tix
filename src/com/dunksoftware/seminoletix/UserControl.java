@@ -98,7 +98,7 @@ public class UserControl {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 			}
-			return Integer.toString(response.getStatusLine().getStatusCode());
+			return "Error Occurred";
 		}
 
 	}
