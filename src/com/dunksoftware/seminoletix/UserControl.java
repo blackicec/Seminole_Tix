@@ -86,32 +86,6 @@ public class UserControl {
 					// If the response does not enclose an entity, there is no need
 					// to worry about connection release
 
-					if (entity != null) {
-						// A Simple JSON Response Read
-						InputStream instream = entity.getContent();
-
-						JSONArray jsonArray;
-						
-						try {
-							jsonArray = new JSONArray(Constants.convertStreamToString(instream));
-
-							// allocate space for the object array
-							jsonObjects = new JSONObject[jsonArray.length()];
-							for( int i = 0; i < jsonArray.length(); ++i) {
-								jsonObjects[i] = new JSONObject(jsonArray.optString(i));
-							}
-							returnValue = "Good";
-							return returnValue;
-						}
-
-						catch (JSONException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
-						// Close the stream.
-						instream.close();
-					}
 				}
 				else {
 					// code here for a response other than 200.  A response 200 means the webpage was ok
@@ -122,23 +96,6 @@ public class UserControl {
 							response.getStatusLine();
 					return returnValue;
 				}
-
-				/*if (entity != null) {
-					// A Simple JSON Response Read
-					InputStream instream = entity.getContent();
-					returnValue += " Entity not NULL";
-					try {
-						returnValue += " Made it to try 2";
-						JSONArray jsonArray = new JSONArray(Constants.convertStreamToString(instream));
-						returnValue += "At return 1";
-
-						return jsonArray.toString();
-						//returnValue = jsonArray.toString();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}*/
 
 				return returnValue;
 
