@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 
 public class Constants {
 	
-	public static String UsersAddress = "http://remote.erdaniels.com/users";
+	public static String UsersAddress = "http://chi.erdaniels.com/users";
 	public static int CARD_NUMBER_LENGTH = 12;
 	
 	public static String convertStreamToString(InputStream is) {
