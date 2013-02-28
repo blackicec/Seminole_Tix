@@ -211,4 +211,8 @@ public class Constants {
 	     }
 	}
 	*/
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 095f1dfa5b7a654c5210a7d58daa2546c359550c
