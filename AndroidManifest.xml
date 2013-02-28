@@ -33,8 +33,7 @@
         </activity>
         <activity
             android:name="com.dunksoftware.seminoletix.ListActivity"
-            android:label="@string/title_activity_list"
-            android:parentActivityName="MenuActivity" >
+            android:label="@string/title_activity_list" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="MenuActivity" />
