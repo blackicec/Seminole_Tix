@@ -68,7 +68,7 @@ public class UserControl {
 			// Add your data
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 
-			nameValuePairs.add(new BasicNameValuePair("cardNum", CardNumber));
+			nameValuePairs.add(new BasicNameValuePair("cardNum", CardNumber)); 
 			nameValuePairs.add(new BasicNameValuePair("pin", PIN));
 			nameValuePairs.add(new BasicNameValuePair("email", Email));
 			nameValuePairs.add(new BasicNameValuePair("password", Password));
