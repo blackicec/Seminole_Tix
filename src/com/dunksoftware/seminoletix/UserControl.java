@@ -53,9 +53,8 @@ public class UserControl {
 
 		@Override
 		protected String doInBackground(Void... arg0) {
-			String returnValue = "NOOP";
-
-			JSONObject[] jsonObjects;
+			//TODO - check to see if internet connection exists, if not return message.
+			String returnValue = "Successful Registration";
 
 			HttpResponse response = null;
 
@@ -63,8 +62,6 @@ public class UserControl {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(Constants.UsersAddress);
 
-
-			returnValue += " -> Made it to try, ";
 			// Add your data
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 
@@ -73,7 +70,7 @@ public class UserControl {
 			nameValuePairs.add(new BasicNameValuePair("email", Email));
 			nameValuePairs.add(new BasicNameValuePair("password", Password));
 			
-			try {
+			try { //  will be change later (set flag in if statement, handle messages outside
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 				// Execute HTTP Post Request

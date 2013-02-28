@@ -3,10 +3,8 @@
 
     <string name="app_name">SeminoleTix</string>
     <string name="menu_settings">Settings</string>
-    <string name="dunkey">Hey Dunkies!</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_login">LoginActivity</string>
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_login">Welcome to SeminoleTix</string>
+    <string name="title_activity_register">Register an Account</string>
     <string name="cardHint">FSU Card Number</string>
     <string name="pinHint">PIN</string>
     <string name="emailHint">FSU email</string>
