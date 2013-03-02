@@ -1,0 +1,55 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ListActivity" >
+
+    <ScrollView
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    	<TableLayout
+        	android:layout_width="fill_parent"
+        	android:layout_height="wrap_content"
+        	android:padding="10dip" >
+
+	        <TableRow
+	            android:id="@+id/tableRow1"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" >
+	            
+	            <TextView 
+	                android:id="@+id/TextViewSPORT" 
+	                android:layout_width="wrap_content" 
+	                android:layout_height="wrap_content" 
+	                android:text="Sport">
+	            </TextView>
+	            
+	            <TextView 
+	                android:id="@+id/TextViewOpponent" 
+	                android:layout_width="wrap_content" 
+	                android:layout_height="wrap_content" 
+	                android:text="Opponent">
+	            </TextView>
+
+	
+	            <TextView 
+	                android:id="@+id/TextViewDate" 
+	                android:layout_width="wrap_content" 
+	                android:layout_height="wrap_content" 
+	                android:text="Date">
+	            </TextView>
+	            
+	            <Button
+	                android:id="@+id/ButtonDetails"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:minHeight="0dp"
+	                android:onClick="showDetails"
+	                android:text="Details"
+	                android:textSize="14sp" />
+	                
+	   		</TableRow>
+	   		    
+	    </TableLayout>
+	</ScrollView>
+</RelativeLayout>

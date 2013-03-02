@@ -3,6 +3,8 @@ package com.dunksoftware.seminoletix;
 import java.util.concurrent.ExecutionException;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -10,6 +12,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RegisterActivity extends Activity {
 
@@ -49,20 +52,26 @@ public class RegisterActivity extends Activity {
 				new OnClickListener() {
 
 			boolean formOK = true;
+			String errorMessage = "";
+			Intent LoginIntent;
 			
 			@Override
 			public void onClick(View arg0) {
+				
+				// reset the valid form flag
+				formOK = true;
+				
 				if( verifyEntries() ) {
 					
 					// clear error message
-					ErrorMessage.setText("");
+					ErrorMessage.setText("");	
 					
 					// compare two passwords for equality
 					String confirmPass = EditConfirmPass.getText().toString();
 					if( !EditPassword.getText().toString().equals(confirmPass) ) {
 						formOK = false;
 						
-						ErrorMessage.setText("Password entries do not match");
+						errorMessage = "Password entries do not match";
 						
 						EditPassword.setText("");
 						EditConfirmPass.setText("");
@@ -73,7 +82,7 @@ public class RegisterActivity extends Activity {
 					if( !email.contains("@")) {
 						formOK = false;
 						
-						ErrorMessage.setText("Expected email format: \"user@server_name.com\"");
+						errorMessage = "Expected email format: \"user@server_name.com\""; 
 					}
 					
 					// check card number length
@@ -81,7 +90,7 @@ public class RegisterActivity extends Activity {
 							Constants.CARD_NUMBER_LENGTH) {
 						formOK = false;
 						
-						ErrorMessage.setText("Incorrect length on FSU Card Number");
+						errorMessage = "Incorrect length on FSU Card Number";
 					} Commented out for testing purposes only */
 						
 					if( formOK ) {
@@ -97,19 +106,28 @@ public class RegisterActivity extends Activity {
 						registerUser.execute();
 						
 						try {
-							ErrorMessage.setText( registerUser.get() );
+							ShowMessage(registerUser.get(), Toast.LENGTH_LONG);
+							
+							// Send the user back to the login page.
+							if(registerUser.get().equals(Constants.SuccessMessage)) {
+								LoginIntent = new Intent( getApplicationContext(), 
+										LoginActivity.class);
+								startActivity(LoginIntent);
+							}
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (ExecutionException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
+					else {
+						// Display current problem with the form
+						ShowMessage(errorMessage, Toast.LENGTH_SHORT);
+					}
 				}
 				else {
-					
-					ErrorMessage.setText("Error: All fields are required to have a value.");
+					ShowMessage("All fields are require a value.", 
+							Toast.LENGTH_LONG);
 				}
 			}
 		});
@@ -165,4 +183,7 @@ public class RegisterActivity extends Activity {
 		return true;
 	}
 
+	void ShowMessage(String message, int length) {
+		Toast.makeText(getApplicationContext(), message, length).show();
+	}
 }

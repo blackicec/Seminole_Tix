@@ -53,6 +53,8 @@ public class UserControl {
 
 		@Override
 		protected String doInBackground(Void... arg0) {
+			//TODO - check to see if internet connection exists, if not return message.
+			String returnValue = "Successful Registration";
 
 			HttpResponse response = null;
 
@@ -60,47 +62,48 @@ public class UserControl {
 			HttpClient httpclient = new DefaultHttpClient();
 			HttpPost httppost = new HttpPost(Constants.UsersAddress);
 
-			try {
-				// Add your data
-				List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+			// Add your data
+			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
 
-				nameValuePairs.add(new BasicNameValuePair("cardNum", CardNumber));
-				nameValuePairs.add(new BasicNameValuePair("pin", PIN));
-				nameValuePairs.add(new BasicNameValuePair("email", Email));
-				nameValuePairs.add(new BasicNameValuePair("password", Password));
-
+			nameValuePairs.add(new BasicNameValuePair("cardNum", CardNumber)); 
+			nameValuePairs.add(new BasicNameValuePair("pin", PIN));
+			nameValuePairs.add(new BasicNameValuePair("email", Email));
+			nameValuePairs.add(new BasicNameValuePair("password", Password));
+			
+			try { //  will be change later (set flag in if statement, handle messages outside
 				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
 				// Execute HTTP Post Request
-				response = httpclient.execute(httppost);
+				response = httpclient.execute(httppost);	
 
-				// If the response does not enclose an entity, there is no need
-				// to worry about connection release
-				HttpEntity entity = response.getEntity();
+				if(response.getStatusLine().getStatusCode() == 200){
+					// Connection was established. Get the content. 
 
-				if (entity != null) {
-					// A Simple JSON Response Read
-					InputStream instream = entity.getContent();
+					HttpEntity entity = response.getEntity();
+					// If the response does not enclose an entity, there is no need
+					// to worry about connection release
 
-					try {
-						JSONArray jsonArray = new JSONArray(Constants.convertStreamToString(instream));
-						return jsonArray.toString();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+				}
+				else {
+					// code here for a response other than 200.  A response 200 means the webpage was ok
+					// Other codes include 404 - not found, 301 - redirect etc...
+					// Display the response line.
+					returnValue = "Unable to load page - " + "Code: " + 
+							Integer.toString(response.getStatusLine().getStatusCode()) +
+							response.getStatusLine();
+					return returnValue;
 				}
 
-				return Integer.toString(response.getStatusLine().getStatusCode());
+				return returnValue;
 
-			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
 			}
-			return Integer.toString(response.getStatusLine().getStatusCode());
+			catch (IOException  ex) {
+				// Connection was not established
+				returnValue = "Connection failed; " + ex.getMessage();
+			}
+			
+			return returnValue;
 		}
-
 	}
 
 	/***
@@ -130,7 +133,7 @@ public class UserControl {
 
 			try {
 
-				// Open the webpage.
+				// Open the web page.
 				response = httpclient.execute(httpget);
 
 				if(response.getStatusLine().getStatusCode() == 200){
@@ -146,11 +149,11 @@ public class UserControl {
 
 						JSONArray jsonArray = new JSONArray(Constants.convertStreamToString(instream));
 
-						// allocate space for the obect array
+						// allocate space for the object array
 						jsonObjects = new JSONObject[jsonArray.length()];
 						for( int i = 0; i < jsonArray.length(); ++i) {
 							jsonObjects[i] = new JSONObject(jsonArray.optString(i));
-						}
+						} 
 
 						// Close the stream.
 						instream.close();
@@ -164,7 +167,6 @@ public class UserControl {
 				}
 			}
 			catch (IOException  ex) {
-				// thrown by line 80 - getContent();
 				// Connection was not established
 				returnString = "Connection failed; " + ex.getMessage();
 			}
