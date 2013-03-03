@@ -1,4 +1,5 @@
 var models = require('./models'),
+	check = require('validator').check,
 	User = models.User,
 	Game = models.Game,
 	LoginToken = models.LoginToken;

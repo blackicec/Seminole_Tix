@@ -1,7 +1,6 @@
 var express = require('express'),
 	mongoose = require('mongoose'),
 	Session = require('connect-mongodb'),
-	check = require('validator').check,
 	https = require('https'),
 	http = require('http'),
 	fs = require('fs'),
