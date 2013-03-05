@@ -14,7 +14,6 @@ import android.widget.Button;
 
 public class ListActivity extends Activity {
 	
-	private Button bDetails;
 	private Constants.GetTable mGetTable;
 	private JSONObject[] Games = null;
 	
@@ -24,18 +23,19 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.activity_list);
 		
 		mGetTable = new Constants.GetTable();
-		mGetTable.execute(Constants.UsersAddress);
+		mGetTable.execute(Constants.GamesAddress);
 		try {
 			Games = mGetTable.get();
 			
-			if(Games != null)
-				for(int i = 0; i < Games.length; i++) {
-					Log.w("List Activity", Games[i].getString("_id"));
-				}
-			else
+			if(Games == null)
 				Log.w("List Activity", "Games is null");
 			
-			//do sh*t with the JSONObjects
+			// pulling of information works fine
+			
+			for(int i = 0; i < Games.length; i++) {
+				Log.w("Games", Games[i].getString("_id"));
+				Log.w("Games", Games[i].getString("sport"));
+			}
 			
 		} catch(JSONException ex) {
 			Log.w("List Activity - mGetTable.getString()", ex.getMessage());
