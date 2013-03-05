@@ -41,6 +41,8 @@ db.once('open', function callback() {
 
 	app.get('/users', routes.users_view);
 
+	app.get('/user', lib.loadUser, routes.user_view)
+	
 	// Games
 	app.get('/games', routes.games_view);
 
