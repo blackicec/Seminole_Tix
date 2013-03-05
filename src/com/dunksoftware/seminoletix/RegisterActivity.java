@@ -109,10 +109,18 @@ public class RegisterActivity extends Activity {
 							ShowMessage(registerUser.get(), Toast.LENGTH_LONG);
 							
 							// Send the user back to the login page.
-							if(registerUser.get().equals(Constants.SuccessMessage)) {
+							if(registerUser.get().equals(Constants.Success_msg)) {
 								LoginIntent = new Intent( getApplicationContext(), 
 										LoginActivity.class);
 								startActivity(LoginIntent);
+							}
+							/* if user has entered an incorrect PIN, clear the CardNumber
+							 * and PIN field
+							 */
+							else if( registerUser.get()
+									.equals(Constants.IncorrectPIN_msg) ) {
+								EditCardNumber.getText().clear();
+								EditPIN.getText().clear();
 							}
 						} catch (InterruptedException e) {
 							e.printStackTrace();

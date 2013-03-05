@@ -17,19 +17,19 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-
 import android.os.AsyncTask;
+import android.support.v4.content.AsyncTaskLoader;
 
 
 public class UserControl {
 
 	/***
-	 * 
 	 * @author blackice
-	 *
 	 */
 	public static class RegisterUser extends AsyncTask<Void, Void, String> {
+		
+		private AsyncTask<String, Void, JSONObject[]> asyncAccounts;
+		
 		private String CardNumber,
 		PIN,
 		Email,
@@ -53,6 +53,11 @@ public class UserControl {
 
 		@Override
 		protected String doInBackground(Void... arg0) {
+			
+			/* First we wann check to make sure that the given PIN matches the
+			 * Pun number inside of the database 
+			 */
+			
 			//TODO - check to see if internet connection exists, if not return message.
 			String returnValue = "Successful Registration";
 
