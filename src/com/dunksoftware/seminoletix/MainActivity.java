@@ -63,6 +63,7 @@ public class MainActivity extends Activity {
 				 * Kind of like a map or set
 				 */
 				nextActivityIntent.setClass(MainActivity.this, LoginActivity.class);
+				//nextActivityIntent.setClass(MainActivity.this, ListActivity.class);
 				
 				// Now that the navigation data is set, let's fire off
 				startActivity(nextActivityIntent);

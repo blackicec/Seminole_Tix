@@ -48,7 +48,11 @@ public class Constants {
 	
 	public static String UsersAddress = "http://chi.erdaniels.com/users/";
 	public static String GamesAddress = "http://chi.erdaniels.com/games/";
-	public static String SuccessMessage = "Successful Registration";
+	
+	public static String Success_msg = "Successful Registration";
+	public static String IncorrectPIN_msg = "The provided information does " +
+			"not match our records.";
+	
 	public static int CARD_NUMBER_LENGTH = 12;
 	
 	public static class GetTable extends AsyncTask<String, Void, JSONObject[]> {
