@@ -103,7 +103,8 @@ public class RegisterActivity extends Activity {
 						// . . . then POST to site
 						registerUser = new UserControl.RegisterUser(CardNumber, PIN, Email, Password);
 						
-						registerUser.execute();
+						//registerUser.execute();
+						registerUser.register();
 						
 						try {
 							ShowMessage(registerUser.get(), Toast.LENGTH_LONG);

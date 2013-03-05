@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -27,13 +28,15 @@ public class UserControl {
 	 * @author blackice
 	 */
 	public static class RegisterUser extends AsyncTask<Void, Void, String> {
-		
+
 		private AsyncTask<String, Void, JSONObject[]> asyncAccounts;
-		
+
 		private String CardNumber,
 		PIN,
 		Email,
 		Password;
+		
+		boolean credentialsOK;
 
 		/***
 		 * 
@@ -49,15 +52,53 @@ public class UserControl {
 			PIN = pin;
 			Email = email;
 			Password = password;
+			
+			// first assume that given credentials are correct
+			credentialsOK = true;
+		}
+		
+		public void register() {
+			asyncAccounts = new Constants.GetTable();
+			asyncAccounts.execute( Constants.UsersAddress );
+
+			// holds the return value for the list of users returned from GetTable()
+			JSONObject[] JSONusers;
+
+			try {
+				JSONusers = asyncAccounts.get();
+
+				for(int i = 0; i < JSONusers.length; ++i) {
+					try {
+						if(JSONusers[i].get("cardNum").equals(CardNumber)) {
+							if( !JSONusers[i].get("pin").equals(PIN) ) {
+								credentialsOK = false;
+							}
+						}
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				// The POST will execute iff the credentialsOK is still set to TRUE
+				this.execute();
+
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		protected String doInBackground(Void... arg0) {
-			
-			/* First we wann check to make sure that the given PIN matches the
+
+			/* First we want to check to make sure that the given PIN matches the
 			 * Pun number inside of the database 
 			 */
-			
+
 			//TODO - check to see if internet connection exists, if not return message.
 			String returnValue = "Successful Registration";
 
@@ -74,39 +115,44 @@ public class UserControl {
 			nameValuePairs.add(new BasicNameValuePair("pin", PIN));
 			nameValuePairs.add(new BasicNameValuePair("email", Email));
 			nameValuePairs.add(new BasicNameValuePair("password", Password));
-			
-			try { //  will be change later (set flag in if statement, handle messages outside
-				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-				// Execute HTTP Post Request
-				response = httpclient.execute(httppost);	
+			if( credentialsOK ) {
+				try { //  will be change later (set flag in if statement, handle messages outside
+					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-				if(response.getStatusLine().getStatusCode() == 200){
-					// Connection was established. Get the content. 
+					// Execute HTTP Post Request
+					response = httpclient.execute(httppost);	
 
-					HttpEntity entity = response.getEntity();
-					// If the response does not enclose an entity, there is no need
-					// to worry about connection release
+					if(response.getStatusLine().getStatusCode() == 200){
+						// Connection was established. Get the content. 
 
-				}
-				else {
-					// code here for a response other than 200.  A response 200 means the webpage was ok
-					// Other codes include 404 - not found, 301 - redirect etc...
-					// Display the response line.
-					returnValue = "Unable to load page - " + "Code: " + 
-							Integer.toString(response.getStatusLine().getStatusCode()) +
-							response.getStatusLine();
+						HttpEntity entity = response.getEntity();
+						// If the response does not enclose an entity, there is no need
+						// to worry about connection release
+
+					}
+					else {
+						// code here for a response other than 200.  A response 200 means the webpage was ok
+						// Other codes include 404 - not found, 301 - redirect etc...
+						// Display the response line.
+						returnValue = "Unable to load page - " + "Code: " + 
+								Integer.toString(response.getStatusLine().getStatusCode()) +
+								response.getStatusLine();
+						return returnValue;
+					}
+
 					return returnValue;
+
 				}
-
-				return returnValue;
-
+				catch (IOException  ex) {
+					// Connection was not established
+					returnValue = "Connection failed; " + ex.getMessage();
+				}
 			}
-			catch (IOException  ex) {
-				// Connection was not established
-				returnValue = "Connection failed; " + ex.getMessage();
-			}
-			
+			else
+				returnValue = Constants.IncorrectPIN_msg;
+
+			// return the status of the POST
 			return returnValue;
 		}
 	}
