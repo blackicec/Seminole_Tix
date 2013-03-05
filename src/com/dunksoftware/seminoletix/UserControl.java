@@ -57,6 +57,8 @@ public class UserControl {
 			/* First we wann check to make sure that the given PIN matches the
 			 * Pun number inside of the database 
 			 */
+			asyncAccounts = new Constants.GetTable();
+			asyncAccounts.execute( Constants.UsersAddress );
 			
 			//TODO - check to see if internet connection exists, if not return message.
 			String returnValue = "Successful Registration";
