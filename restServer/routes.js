@@ -28,7 +28,7 @@ exports.login = function(req, res) {
 					}
 
 				} else {
-					res.json({success:false, error:'Invalid email/cardNum or password.'});
+					res.json({success:false, error:'Invalid email/card number or password'});
 				}
 			});
 		} else {
@@ -45,7 +45,7 @@ exports.logout = function(req, res) {
 		res.json({success:true});
 	}
 	else
-		res.json({success:false, error:'Not logged in.'});
+		res.json({success:false, error:'Not logged in'});
 };
 
 exports.users_register = function(req, res) {
@@ -72,18 +72,18 @@ exports.users_register = function(req, res) {
 							});
 						}
 						else {
-							res.json({success: false, message: 'Invalid email.'});
+							res.json({success: false, message: 'Invalid email format'});
 						}
 					}
 					else {
-						res.json({success: false, message: 'Invalid pin.'});
+						res.json({success: false, message: 'Invalid card number or PIN'});
 					}						
 					
 				} else {
 					if (!user)
-						res.json({success: false, message: 'No user found with that card number'});
+						res.json({success: false, message: 'Invalid card number or PIN'});
 					else 
-						res.json({success: false, message: 'User already registered'});
+						res.json({success: false, message: 'Account already exists'});
 				}
 			});
 		}
