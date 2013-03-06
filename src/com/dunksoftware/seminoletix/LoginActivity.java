@@ -34,8 +34,8 @@ public class LoginActivity extends Activity {
 	private String mUserResponse,
 		mPassResponse;
 	
-	private UserControl.GetUsers mGetUsers;
-	
+
+	private Constants.GetTable Users;
 	private SharedPreferences mSettings;
 	
 	
@@ -55,7 +55,7 @@ public class LoginActivity extends Activity {
 		mRegisterBtn = (Button)findViewById(R.id.UI_registerBtn);
 		mLoginBtn = (Button)findViewById(R.id.UI_signinBtn);
 		
-		mGetUsers = new UserControl.GetUsers();
+		Users = new Constants.GetTable();
 		
 		// set anonymous onclick listeners for registration and login buttons
 		mLoginBtn.setOnClickListener(
@@ -69,12 +69,11 @@ public class LoginActivity extends Activity {
 				mUserResponse = editUsername.getText().toString();
 				mPassResponse = editPassword.getText().toString();
 				
-				TextView message = (TextView)findViewById(R.id.UI_Message);		
-				
-				mGetUsers.execute();
+				TextView message = (TextView)findViewById(R.id.UI_Message);
+				Users.execute(Constants.UsersAddress);
 				try {
 					// Retrieve the array of JSON objects
-					jsonObjects = mGetUsers.get();
+					jsonObjects = Users.get();
 					
 					// attempt to validate entries
 					boolean response = validate(jsonObjects, mUserResponse, "1234");

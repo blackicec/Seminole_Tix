@@ -1,28 +1,19 @@
 package com.dunksoftware.seminoletix;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Entity;
 import android.os.AsyncTask;
-import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 
 public class UserControl {
@@ -74,7 +65,7 @@ public class UserControl {
 			HttpResponse response = null;
 
 			// Create a new HttpClient and Post Header
-			HttpClient httpclient = new DefaultHttpClient();
+			HttpClient httpclient = new MyHttpClient(null);
 			HttpPost httppost = new HttpPost(Constants.UsersAddress);
 
 			// Add your data
@@ -107,10 +98,18 @@ public class UserControl {
 	}
 
 	/***
+	 * 
+	 * DEPRICATED
+	 * - Evan
+	 * 
+	 * use Constants.GetTable and gettable.execute("url");
+	 */
+	/***
 	 * comment (null return check)
 	 * @author blackice
 	 *
 	 */
+	/*
 	public static class GetUsers extends AsyncTask<Void, Void, JSONObject[]> {
 
 		@Override
@@ -179,5 +178,5 @@ public class UserControl {
 		}
 
 	}
-
+*/
 }
