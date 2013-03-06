@@ -89,12 +89,14 @@ public class RegisterActivity extends Activity {
 							}
 
 							// check card number length
-							/*if(EditCardNumber.getText().length() != 
-							Constants.CARD_NUMBER_LENGTH) {
-						formOK = false;
+							// Commented out for testing purposes only
+							/*
+							if(EditCardNumber.getText().length() != 
+									Constants.CARD_NUMBER_LENGTH) {
+								formOK = false;
 
-						errorMessage = "Incorrect length on FSU Card Number";
-					} Commented out for testing purposes only */
+								errorMessage = "Incorrect length on FSU Card Number";
+							} */
 
 							if( formOK ) {
 								// capture data from the form
@@ -108,8 +110,8 @@ public class RegisterActivity extends Activity {
 								registerUser.execute();
 
 								try {
-									
 									JSONObject JSONresponse = new JSONObject(registerUser.get());
+<<<<<<< HEAD
 									
 									//JSONException: no value for messages
 									//
@@ -118,9 +120,16 @@ public class RegisterActivity extends Activity {
 									//
 									
 									ShowMessage(successMsg, Toast.LENGTH_LONG);
+=======
+									//ShowMessage(JSONresponse.getString("success"), Toast.LENGTH_LONG);
+>>>>>>> 28c65d4415148fd7d0cc9af44ad7eed1fc08df07
 
 									// Send the user back to the login page.
-									if( JSONresponse.get("success").equals("true")) {
+									if( JSONresponse.getString("success").equals("true")) {
+										
+										// Print out a success message to the user's UI
+										ShowMessage(Constants.Success_msg, Toast.LENGTH_LONG);
+										
 										LoginIntent = new Intent( getApplicationContext(), 
 												LoginActivity.class);
 										startActivity(LoginIntent);
@@ -130,13 +139,16 @@ public class RegisterActivity extends Activity {
 										 *  once a user has successfully registered. 
 										 *  (Basically takes this page out of the "page history" )
 										 */
+										
 										finish();
 									}
-									/* if user has entered an incorrect PIN, clear the CardNumber
+									/* if sever returns false on registration, clear the CardNumber
 									 * and PIN field
 									 */
-									else if( registerUser.get()
-											.equals(Constants.IncorrectPIN_msg) ) {
+									else {
+										// Print out a success message to the user's UI
+										ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
+										
 										EditCardNumber.getText().clear();
 										EditPIN.getText().clear();
 									}

@@ -24,8 +24,6 @@ public class Constants {
 	public static String GamesAddress = "https://chi.erdaniels.com/games/";
 	
 	public static String Success_msg = "Successful Registration";
-	public static String IncorrectPIN_msg = "The provided information does " +
-			"not match our records.";
 	
 	public static int CARD_NUMBER_LENGTH = 12;
 	
