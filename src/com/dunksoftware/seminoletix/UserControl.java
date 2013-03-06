@@ -67,8 +67,7 @@ public class UserControl {
 			 * Pun number inside of the database 
 			 */
 
-			//TODO - check to see if internet connection exists, if not return message. TAKE OUTSIDE
-			String auccess = "Successful Registration";
+			// TODO - check to see if internet connection exists, if not return message. TAKE OUTSIDE
 			String responseMessage = null;
 
 			HttpResponse response = null;
