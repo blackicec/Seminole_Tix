@@ -15,9 +15,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.content.Entity;
 import android.os.AsyncTask;
 import android.support.v4.content.AsyncTaskLoader;
 
@@ -35,7 +38,7 @@ public class UserControl {
 		PIN,
 		Email,
 		Password;
-		
+
 		boolean credentialsOK;
 
 		/***
@@ -52,44 +55,9 @@ public class UserControl {
 			PIN = pin;
 			Email = email;
 			Password = password;
-			
+
 			// first assume that given credentials are correct
 			credentialsOK = true;
-		}
-		
-		public void register() {
-			asyncAccounts = new Constants.GetTable();
-			asyncAccounts.execute( Constants.UsersAddress );
-
-			// holds the return value for the list of users returned from GetTable()
-			JSONObject[] JSONusers;
-
-			try {
-				JSONusers = asyncAccounts.get();
-
-				for(int i = 0; i < JSONusers.length; ++i) {
-					try {
-						if(JSONusers[i].get("cardNum").equals(CardNumber)) {
-							if( !JSONusers[i].get("pin").equals(PIN) ) {
-								credentialsOK = false;
-							}
-						}
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
-				// The POST will execute iff the credentialsOK is still set to TRUE
-				this.execute();
-
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 		}
 
 		@Override
@@ -99,8 +67,9 @@ public class UserControl {
 			 * Pun number inside of the database 
 			 */
 
-			//TODO - check to see if internet connection exists, if not return message.
-			String returnValue = "Successful Registration";
+			//TODO - check to see if internet connection exists, if not return message. TAKE OUTSIDE
+			String auccess = "Successful Registration";
+			String responseMessage = null;
 
 			HttpResponse response = null;
 
@@ -116,44 +85,24 @@ public class UserControl {
 			nameValuePairs.add(new BasicNameValuePair("email", Email));
 			nameValuePairs.add(new BasicNameValuePair("password", Password));
 
-			if( credentialsOK ) {
-				try { //  will be change later (set flag in if statement, handle messages outside
-					httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-					// Execute HTTP Post Request
-					response = httpclient.execute(httppost);	
+			try {
+				httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 
-					if(response.getStatusLine().getStatusCode() == 200){
-						// Connection was established. Get the content. 
+				// Execute HTTP Post Request
+				response = httpclient.execute(httppost);
 
-						HttpEntity entity = response.getEntity();
-						// If the response does not enclose an entity, there is no need
-						// to worry about connection release
+				responseMessage = EntityUtils.toString(response.getEntity());
 
-					}
-					else {
-						// code here for a response other than 200.  A response 200 means the webpage was ok
-						// Other codes include 404 - not found, 301 - redirect etc...
-						// Display the response line.
-						returnValue = "Unable to load page - " + "Code: " + 
-								Integer.toString(response.getStatusLine().getStatusCode()) +
-								response.getStatusLine();
-						return returnValue;
-					}
-
-					return returnValue;
-
-				}
-				catch (IOException  ex) {
-					// Connection was not established
-					returnValue = "Connection failed; " + ex.getMessage();
-				}
+				return responseMessage;
 			}
-			else
-				returnValue = Constants.IncorrectPIN_msg;
+			catch (IOException  ex) {
+				// Connection was not established
+				responseMessage = "Connection failed; " + ex.getMessage();
+			}			
 
 			// return the status of the POST
-			return returnValue;
+			return responseMessage;
 		}
 	}
 
