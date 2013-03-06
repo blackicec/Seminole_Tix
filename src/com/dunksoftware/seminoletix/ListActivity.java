@@ -31,6 +31,7 @@ public class ListActivity extends Activity {
 				Log.w("List Activity", "Games is null");
 			
 			// pulling of information works fine
+			// Games[index].getString("FIELD_NAME")
 			
 			for(int i = 0; i < Games.length; i++) {
 				Log.w("Games", Games[i].getString("_id"));
