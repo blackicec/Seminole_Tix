@@ -2,6 +2,9 @@ package com.dunksoftware.seminoletix;
 
 import java.util.concurrent.ExecutionException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -17,134 +20,145 @@ import android.widget.Toast;
 public class RegisterActivity extends Activity {
 
 	private EditText EditCardNumber,
-		EditPIN,
-		EditEmail,
-		EditPassword,
-		EditConfirmPass;
-	
+	EditPIN,
+	EditEmail,
+	EditPassword,
+	EditConfirmPass;
+
 	private String CardNumber,
-		PIN,
-		Email,
-		Password;
-	
+	PIN,
+	Email,
+	Password;
+
 	private TextView ErrorMessage;
-	
+
 	// This variable handles user registration after form validation
 	private UserControl.RegisterUser registerUser;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_register);
-		
+
 		// Link all UI widgets to reference variables
 		EditCardNumber = (EditText)findViewById(R.id.UI_EditCardNum);
 		EditPIN = (EditText)findViewById(R.id.UI_EditPIN);
 		EditEmail = (EditText)findViewById(R.id.UI_EditEmail);
 		EditPassword = (EditText)findViewById(R.id.UI_EditPassword);
 		EditConfirmPass = (EditText)findViewById(R.id.UI_EditConfirmPassword);
-		
+
 		// link message box to output error message
 		ErrorMessage = (TextView)findViewById(R.id.UI_TextMessage);
-		
+
 		// Listener for submit button. Validates form data
 		((Button)findViewById(R.id.UI_ButtonConfirm)).setOnClickListener(
 				new OnClickListener() {
 
-			boolean formOK = true;
-			String errorMessage = "";
-			Intent LoginIntent;
-			
-			@Override
-			public void onClick(View arg0) {
-				
-				// reset the valid form flag
-				formOK = true;
-				
-				if( verifyEntries() ) {
-					
-					// clear error message
-					ErrorMessage.setText("");	
-					
-					// compare two passwords for equality
-					String confirmPass = EditConfirmPass.getText().toString();
-					if( !EditPassword.getText().toString().equals(confirmPass) ) {
-						formOK = false;
-						
-						errorMessage = "Password entries do not match";
-						
-						EditPassword.setText("");
-						EditConfirmPass.setText("");
-					}
-					
-					// check email for format (contains '@', .com)
-					String email = EditEmail.getText().toString();
-					if( !email.contains("@")) {
-						formOK = false;
-						
-						errorMessage = "Expected email format: \"user@server_name.com\""; 
-					}
-					
-					// check card number length
-					/*if(EditCardNumber.getText().length() != 
+					boolean formOK = true;
+					String errorMessage = "";
+					Intent LoginIntent;
+
+					@Override
+					public void onClick(View arg0) {
+
+						// reset the valid form flag
+						formOK = true;
+
+						if( verifyEntries() ) {
+
+							// clear error message
+							ErrorMessage.setText("");	
+
+							// compare two passwords for equality
+							String confirmPass = EditConfirmPass.getText().toString();
+							if( !EditPassword.getText().toString().equals(confirmPass) ) {
+								formOK = false;
+
+								errorMessage = "Password entries do not match";
+
+								EditPassword.setText("");
+								EditConfirmPass.setText("");
+							}
+
+							// check email for format (contains '@', .com)
+							String email = EditEmail.getText().toString();
+							if( !email.contains("@")) {
+								formOK = false;
+
+								errorMessage = "Expected email format: \"user@server_name.com\""; 
+							}
+
+							// check card number length
+							/*if(EditCardNumber.getText().length() != 
 							Constants.CARD_NUMBER_LENGTH) {
 						formOK = false;
-						
+
 						errorMessage = "Incorrect length on FSU Card Number";
 					} Commented out for testing purposes only */
-						
-					if( formOK ) {
-						// capture data from the form
-						CardNumber = EditCardNumber.getText().toString();
-						PIN = EditPIN.getText().toString();
-						Email = EditEmail.getText().toString();
-						Password = EditPassword.getText().toString();
-						
-						// . . . then POST to site
-						registerUser = new UserControl.RegisterUser(CardNumber, PIN, Email, Password);
-						
-						//registerUser.execute();
-						registerUser.register();
-						
-						try {
-							ShowMessage(registerUser.get(), Toast.LENGTH_LONG);
-							
-							// Send the user back to the login page.
-							if(registerUser.get().equals(Constants.Success_msg)) {
-								LoginIntent = new Intent( getApplicationContext(), 
-										LoginActivity.class);
-								startActivity(LoginIntent);
+
+							if( formOK ) {
+								// capture data from the form
+								CardNumber = EditCardNumber.getText().toString();
+								PIN = EditPIN.getText().toString();
+								Email = EditEmail.getText().toString();
+								Password = EditPassword.getText().toString();
+
+								// . . . then POST to site
+								registerUser = new UserControl.RegisterUser(CardNumber, PIN, Email, Password);
+								registerUser.execute();
+
+								try {
+									
+									JSONObject JSONresponse = new JSONObject(registerUser.get());
+									String successMsg = JSONresponse.get("messages").toString();
+									
+									ShowMessage(successMsg, Toast.LENGTH_LONG);
+
+									// Send the user back to the login page.
+									if( JSONresponse.get("success").equals("true")) {
+										LoginIntent = new Intent( getApplicationContext(), 
+												LoginActivity.class);
+										startActivity(LoginIntent);
+
+										/* Close the current activity, ensuring that this
+										 *  SAME page cannot be reached via Back button, 
+										 *  once a user has successfully registered. 
+										 *  (Basically takes this page out of the "page history" )
+										 */
+										finish();
+									}
+									/* if user has entered an incorrect PIN, clear the CardNumber
+									 * and PIN field
+									 */
+									else if( registerUser.get()
+											.equals(Constants.IncorrectPIN_msg) ) {
+										EditCardNumber.getText().clear();
+										EditPIN.getText().clear();
+									}
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								} catch (ExecutionException e) {
+									e.printStackTrace();
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
 							}
-							/* if user has entered an incorrect PIN, clear the CardNumber
-							 * and PIN field
-							 */
-							else if( registerUser.get()
-									.equals(Constants.IncorrectPIN_msg) ) {
-								EditCardNumber.getText().clear();
-								EditPIN.getText().clear();
+							else {
+								// Display current problem with the form
+								ShowMessage(errorMessage, Toast.LENGTH_SHORT);
 							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							e.printStackTrace();
+						}
+						else {
+							ShowMessage("All fields are require a value.", 
+									Toast.LENGTH_LONG);
 						}
 					}
-					else {
-						// Display current problem with the form
-						ShowMessage(errorMessage, Toast.LENGTH_SHORT);
-					}
-				}
-				else {
-					ShowMessage("All fields are require a value.", 
-							Toast.LENGTH_LONG);
-				}
-			}
-		});
-		
+				});
+
 		// Listener for clear button. Simply clears out all of the form data
 		((Button)findViewById(R.id.UI_ButtonClear)).setOnClickListener(
 				new OnClickListener() {
-					
+
 					@Override
 					public void onClick(View arg0) {
 						EditCardNumber.setText("");
@@ -152,17 +166,17 @@ public class RegisterActivity extends Activity {
 						EditEmail.setText("");
 						EditPassword.setText("");
 						EditConfirmPass.setText("");
-						
+
 						// return focus to the first edittext(CardNumber)
 						EditCardNumber.requestFocus();
-						
+
 						// clear error message
 						ErrorMessage.setText("");
 					}
 				});
-		
+
 	}
-	
+
 	/***
 	 * This function simply checks each EditText box to ensure that
 	 * the element does not contain an empty string
@@ -180,8 +194,8 @@ public class RegisterActivity extends Activity {
 			return false;
 		if(EditConfirmPass.getText().length() <= 0)
 			return false;
-		
-		
+
+
 		return true;
 	}
 
