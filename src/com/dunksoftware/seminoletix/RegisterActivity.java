@@ -111,7 +111,7 @@ public class RegisterActivity extends Activity {
 
 								try {
 									JSONObject JSONresponse = new JSONObject(registerUser.get());
-<<<<<<< HEAD
+
 									
 									//JSONException: no value for messages
 									//
@@ -120,9 +120,9 @@ public class RegisterActivity extends Activity {
 									//
 									
 									ShowMessage(successMsg, Toast.LENGTH_LONG);
-=======
+
 									//ShowMessage(JSONresponse.getString("success"), Toast.LENGTH_LONG);
->>>>>>> 28c65d4415148fd7d0cc9af44ad7eed1fc08df07
+
 
 									// Send the user back to the login page.
 									if( JSONresponse.getString("success").equals("true")) {
