@@ -1,5 +1,7 @@
-var models = require('./models'),		// Mongoose models required for database manipulation
-	check = require('validator').check;	// Email validator
+var check = require('validator').check,	// Email validator
+	models = require('./models'),		// Mongoose models required for database manipulation
+	mongoose = require('mongoose');			// Mongoose MongoDB connector
+	
 
 // Mongoose Models
 var	User = models.User,					// Users Collection in MongoDB
@@ -365,9 +367,8 @@ exports.game_reserve = function(req, res) {
 			} else {
 
 				// Check if user has already reserved a ticket
-				for (ticket in req.currentUser.tickets) {
-
-					if (game._id.equals(req.currentUser.tickets[ticket].game_id)) {
+				for (var i = 0; i < req.currentUser.tickets.length; i++) {
+					if (game._id.equals(req.currentUser.tickets[i].game_id)) {
 
 						res.json(
 							{
@@ -377,7 +378,6 @@ exports.game_reserve = function(req, res) {
 						return;
 
 					}
-
 				}
 
 				// Reserve ticket

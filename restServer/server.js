@@ -54,7 +54,7 @@ db.once('open', function callback() {
 	app.post('/login', routes.login);
 
 	// Logout
-	app.get('/logout', routes.logout);
+	app.get('/logout', lib.loadUser, routes.logout);
 
 	// Register User
 	app.post('/users', routes.users_register);
@@ -66,7 +66,7 @@ db.once('open', function callback() {
 	app.get('/user', lib.loadUser, routes.user_view)
 	
 	// View Games
-	app.get('/games', routes.games_view);
+	app.get('/games', lib.loadUser, routes.games_view);
 
 	// View Game
 	app.get('/game/:id', lib.loadUser, routes.game_view);
