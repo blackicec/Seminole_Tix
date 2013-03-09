@@ -76,5 +76,5 @@ db.once('open', function callback() {
 
 	// Start Server for HTTPS
 	https.createServer(options, app).listen(443);
-	console.log('Seminole Tix REST Server listening on port 80 and 443');
+	console.log('Seminole Tix REST Server listening on port 443');
 });
