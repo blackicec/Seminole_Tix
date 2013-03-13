@@ -1,5 +1,6 @@
 package com.dunksoftware.seminoletix;
 import java.io.IOException;
+import java.net.CookieStore;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 
 public class UserControl {
@@ -96,86 +96,68 @@ public class UserControl {
 		}
 	}
 
-	/***
-	 * 
-	 * DEPRICATED
-	 * - Evan
-	 * 
-	 * use Constants.GetTable and gettable.execute("url");
-	 */
-	/***
-	 * comment (null return check)
-	 * @author blackice
-	 *
-	 */
-	/*
-	public static class GetUsers extends AsyncTask<Void, Void, JSONObject[]> {
-
-		@Override
-		protected JSONObject[] doInBackground(Void... params) {
-
-			// create an array of json objects that will be returned
-			JSONObject[] jsonObjects = null;
-
-			// Create the httpclient
-			HttpClient httpclient = new DefaultHttpClient();
-
-			// Prepare a request object
-			HttpGet httpget = new HttpGet(Constants.UsersAddress); 
-
-			// Execute the request
-			HttpResponse response;
-
-			// return string
-			String returnString = null;
-
-			try {
-
-				// Open the web page.
-				response = httpclient.execute(httpget);
-
-				if(response.getStatusLine().getStatusCode() == 200){
-					// Connection was established. Get the content. 
-
-					HttpEntity entity = response.getEntity();
-					// If the response does not enclose an entity, there is no need
-					// to worry about connection release
-
-					if (entity != null) {
-						// A Simple JSON Response Read
-						InputStream instream = entity.getContent();
-
-						JSONArray jsonArray = new JSONArray(Constants.convertStreamToString(instream));
-
-						// allocate space for the object array
-						jsonObjects = new JSONObject[jsonArray.length()];
-						for( int i = 0; i < jsonArray.length(); ++i) {
-							jsonObjects[i] = new JSONObject(jsonArray.optString(i));
-						} 
-
-						// Close the stream.
-						instream.close();
-					}
-				}
-				else {
-					// code here for a response other than 200.  A response 200 means the webpage was ok
-					// Other codes include 404 - not found, 301 - redirect etc...
-					// Display the response line.
-					returnString = "Unable to load page - " + response.getStatusLine();
-				}
-			}
-			catch (IOException  ex) {
-				// Connection was not established
-				returnString = "Connection failed; " + ex.getMessage();
-			}
-			catch (JSONException ex){
-				// JSON errors
-				returnString = "JSON failed; " + ex.getMessage();
-			}
-
-			return jsonObjects;
+	public static class Login extends AsyncTask<Void, Void, String> {
+		
+		private String mUserID,
+			mPassword;
+		private boolean mRemember_Me,
+			mIsEmailAddress;
+		
+		private Object mLock = new Object();
+		private CookieStore mCookie = null;
+		
+		public Login( String ID, String passW, boolean rememberMe ) {
+			mUserID = ID;
+			mPassword = passW;
+			mRemember_Me = rememberMe;
+			
+			mIsEmailAddress = ID.contains("@") ? true : false;
 		}
 
+		@Override // email, cardNum, password, remember_me
+		protected String doInBackground(Void... params) {
+			
+			// TODO - check to see if Internet connection exists, if not return message. TAKE OUTSIDE
+						String responseMessage = null;
+
+						HttpResponse response = null;
+
+						// Create a new HttpClient and Post Header
+						HttpClient httpclient = new MyHttpClient(null);
+						HttpPost httppost = new HttpPost(Constants.LoginAddress);
+
+						// Add your data
+						List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+
+						if( mIsEmailAddress )
+							nameValuePairs.add(new BasicNameValuePair("email", mUserID));
+						else
+							nameValuePairs.add(new BasicNameValuePair("cardNum", mUserID));
+						
+						nameValuePairs.add(new BasicNameValuePair("password", mPassword));
+						
+						if( mRemember_Me )
+							nameValuePairs.add(new BasicNameValuePair("remember_me", "TRUE"));
+
+						try {
+							httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+							// Execute HTTP Post Request
+							response = httpclient.execute(httppost);
+
+							responseMessage = EntityUtils.toString(response.getEntity());
+
+							return responseMessage;
+						}
+						catch (IOException  ex) {
+							// Connection was not established
+							responseMessage = "Connection failed; " + ex.getMessage();
+						}			
+
+						// return the status of the POST
+						return responseMessage;
+			
+		}
+		
 	}
-*/
 }

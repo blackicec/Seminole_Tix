@@ -7,7 +7,7 @@
     <string name="title_activity_register">Register an Account</string>
     <string name="cardHint">FSU Card Number</string>
     <string name="pinHint">PIN</string>
-    <string name="emailHint">FSU email</string>
+    <string name="emailHint">Username or FSU email</string>
     <string name="passHint">password</string>
     <string name="repassHint">confirm password</string>
     <string name="signinButtonText">Sign In</string>
@@ -15,5 +15,6 @@
     <string name="title_activity_list">ListActivity</string>
     <string name="clearButton">Clear Form</string>
     <string name="submitButton">Submit Form</string>
+    <string name="EmailPrompt">"Enter your email "</string>
     
 </resources>

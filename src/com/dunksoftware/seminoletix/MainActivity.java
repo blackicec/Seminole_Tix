@@ -70,29 +70,6 @@ public class MainActivity extends Activity {
 				
 			}
 		});
-		
-		// Second way
-		
-		/* Begin inner class MyOnClick */
-		class MyOnClick implements OnClickListener
-		{
-			// can declare variables if needed
-			Intent nextActivityIntent;
-			
-			public MyOnClick() {
-				nextActivityIntent = new Intent();
-			}
-			
-			@Override
-			public void onClick(View v) {
-				nextActivityIntent.setClass(MainActivity.this, LoginActivity.class);
-				startActivity(nextActivityIntent);
-			}		
-			
-		} /* End of inner class MyOnClick */
-		
-		/** Usage of class implementing OnClickListener interface */
-		//mMoveOn.setOnClickListener(new MyOnClick());
 	}
 
 	@Override
