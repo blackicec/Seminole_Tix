@@ -31,6 +31,7 @@ public class LoginActivity extends Activity {
 
 	private SharedPreferences mSettings;
 
+	private UserControl mUserControl;
 	private UserControl.Login Login;
 
 
@@ -42,6 +43,8 @@ public class LoginActivity extends Activity {
 		// Shared preferences still under construction
 		mSettings = getSharedPreferences(PREFS_NAME, 0);
 		mSettings.getString(USER_NAME, ERROR_STRING);
+		
+		mUserControl = new UserControl();
 
 		// link widgets to variables 
 		editUsername = (EditText)findViewById(R.id.UI_EditFSUID);
@@ -62,9 +65,9 @@ public class LoginActivity extends Activity {
 						mPassResponse = editPassword.getText().toString();
 
 						if( (boolean)findViewById(R.id.UI_CheckRememberMe).isSelected())
-							Login = new UserControl.Login(mUserResponse, mPassResponse, true);
+							Login = mUserControl.new Login(mUserResponse, mPassResponse, true);
 						else
-							Login = new UserControl.Login(mUserResponse, mPassResponse, false);
+							Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
 
 						Login.execute();
 
