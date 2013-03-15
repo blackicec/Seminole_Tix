@@ -64,8 +64,11 @@ public class LoginActivity extends Activity {
 						mUserResponse = editUsername.getText().toString();
 						mPassResponse = editPassword.getText().toString();
 
-						if( (boolean)findViewById(R.id.UI_CheckRememberMe).isSelected())
+						if( ((CheckBox)findViewById(R.id.UI_CheckRememberMe)).isChecked()) {
 							Login = mUserControl.new Login(mUserResponse, mPassResponse, true);
+							
+							ShowMessage("Is selected", Toast.LENGTH_SHORT);
+						}
 						else
 							Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
 

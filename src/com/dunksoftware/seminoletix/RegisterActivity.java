@@ -112,24 +112,12 @@ public class RegisterActivity extends Activity {
 								try {
 									JSONObject JSONresponse = new JSONObject(registerUser.get());
 
-									
-									//JSONException: no value for messages
-									//
-									String successMsg = JSONresponse.get("messages").toString();
-									//
-									//
-									
-									ShowMessage(successMsg, Toast.LENGTH_LONG);
-
-									//ShowMessage(JSONresponse.getString("success"), Toast.LENGTH_LONG);
-
-
 									// Send the user back to the login page.
 									if( JSONresponse.getString("success").equals("true")) {
-										
+
 										// Print out a success message to the user's UI
 										ShowMessage(Constants.Success_msg, Toast.LENGTH_LONG);
-										
+
 										LoginIntent = new Intent( getApplicationContext(), 
 												LoginActivity.class);
 										startActivity(LoginIntent);
@@ -139,7 +127,7 @@ public class RegisterActivity extends Activity {
 										 *  once a user has successfully registered. 
 										 *  (Basically takes this page out of the "page history" )
 										 */
-										
+
 										finish();
 									}
 									/* if sever returns false on registration, clear the CardNumber
@@ -148,9 +136,10 @@ public class RegisterActivity extends Activity {
 									else {
 										// Print out a success message to the user's UI
 										ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
-										
+
 										EditCardNumber.getText().clear();
 										EditPIN.getText().clear();
+										EditEmail.getText().clear();
 									}
 								} catch (InterruptedException e) {
 									e.printStackTrace();

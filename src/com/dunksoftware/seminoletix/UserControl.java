@@ -23,6 +23,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -30,6 +31,8 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
@@ -42,18 +45,18 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
 import android.os.AsyncTask;
+import android.provider.Settings.System;
 
 public class UserControl {
 
 	private static Object mLock = new Object();
-	private static CookieStore mCookie = null;
+	private static CookieStore mCookie = new BasicCookieStore();
 
 	/***
 	 * @author blackice
 	 */
 	public static class RegisterUser extends AsyncTask<Void, Void, String> {
 
-		private AsyncTask<String, Void, JSONObject[]> asyncAccounts;
 
 		private String CardNumber,
 		PIN,
@@ -150,17 +153,11 @@ public class UserControl {
 
 			HttpResponse response = null;
 
-
 			// Create a new HttpClient and Post Header
 			DefaultHttpClient client = getNewHttpClient();
 			HttpPost httppost = new HttpPost(Constants.LoginAddress);
-
-			/*
-			DefaultHttpClient mHttpClient = new DefaultHttpClient();
-			BasicHttpContext mHttpContext = new BasicHttpContext();
-			CookieStore mCookieStore      = new BasicCookieStore();        
-			mHttpContext.setAttribute(ClientContext.COOKIE_STORE, mCookieStore);
-			 */
+			
+			client.setCookieStore(mCookie);
 
 			// Add your data
 			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
@@ -184,18 +181,22 @@ public class UserControl {
 				responseMessage = EntityUtils.toString(response.getEntity());
 
 				mCookie = client.getCookieStore();
-
-				return mCookie.toString();
+				
+				return mCookie.toString() + " ----------------- " + responseMessage;
 				//return responseMessage;
 			}
 			catch (IOException  ex) {
 				// Connection was not established
 				responseMessage = "Connection failed -> " + ex.getMessage();
-			}			
+			}
+			finally {
+				client.getConnectionManager().shutdown();
+			}
 
 			// return the status of the POST
 			return responseMessage;
 		}
+		
 	}
 
 	public class MySSLSocketFactory extends SSLSocketFactory {
