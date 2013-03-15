@@ -20,6 +20,7 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -49,7 +50,6 @@ import android.provider.Settings.System;
 
 public class UserControl {
 
-	private static Object mLock = new Object();
 	private static CookieStore mCookie = new BasicCookieStore();
 
 	/***
@@ -156,7 +156,7 @@ public class UserControl {
 			// Create a new HttpClient and Post Header
 			DefaultHttpClient client = getNewHttpClient();
 			HttpPost httppost = new HttpPost(Constants.LoginAddress);
-			
+
 			client.setCookieStore(mCookie);
 
 			// Add your data
@@ -181,9 +181,9 @@ public class UserControl {
 				responseMessage = EntityUtils.toString(response.getEntity());
 
 				mCookie = client.getCookieStore();
-				
-				return mCookie.toString() + " ----------------- " + responseMessage;
-				//return responseMessage;
+
+				//return mCookie.toString() + " ----------------- " + responseMessage;
+				return responseMessage;
 			}
 			catch (IOException  ex) {
 				// Connection was not established
@@ -195,8 +195,37 @@ public class UserControl {
 
 			// return the status of the POST
 			return responseMessage;
+		}		
+	}
+
+	public class Logout extends AsyncTask<Void, Void, String> {
+
+		@Override
+		protected String doInBackground(Void... params) {
+
+			DefaultHttpClient client = getNewHttpClient();
+			client.setCookieStore(mCookie);
+			
+			HttpGet get = new HttpGet(Constants.LogoutAddress);
+			HttpResponse response = null;
+			String responseMessage = null;
+			
+			try {
+				
+				response = client.execute(get);
+				responseMessage = EntityUtils.toString(response.getEntity());
+				
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return responseMessage;
 		}
-		
+
 	}
 
 	public class MySSLSocketFactory extends SSLSocketFactory {

@@ -2,6 +2,9 @@ package com.dunksoftware.seminoletix;
 
 import java.util.concurrent.ExecutionException;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,6 +36,7 @@ public class LoginActivity extends Activity {
 
 	private UserControl mUserControl;
 	private UserControl.Login Login;
+	private UserControl.Logout Logout;
 
 
 	@Override
@@ -43,7 +47,7 @@ public class LoginActivity extends Activity {
 		// Shared preferences still under construction
 		mSettings = getSharedPreferences(PREFS_NAME, 0);
 		mSettings.getString(USER_NAME, ERROR_STRING);
-		
+
 		mUserControl = new UserControl();
 
 		// link widgets to variables 
@@ -66,7 +70,7 @@ public class LoginActivity extends Activity {
 
 						if( ((CheckBox)findViewById(R.id.UI_CheckRememberMe)).isChecked()) {
 							Login = mUserControl.new Login(mUserResponse, mPassResponse, true);
-							
+
 							ShowMessage("Is selected", Toast.LENGTH_SHORT);
 						}
 						else
@@ -74,21 +78,48 @@ public class LoginActivity extends Activity {
 
 						Login.execute();
 
-						String result = "Error Occurred";
+						//ShowMessage("Error occurred with login.", Toast.LENGTH_LONG );
+
 						try {
-							result = Login.get();
+							JSONObject JSONresponse = new JSONObject(Login.get());
+
+							// Send the user back to the login page.
+							if( JSONresponse.getString("success").equals("true")) {
+
+								startActivity(new Intent(getApplicationContext(), 
+										ListActivity.class));
+								
+								ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
+
+								/* Close the current activity, ensuring that this
+								 *  SAME page cannot be reached via Back button, 
+								 *  once a user has successfully registered. 
+								 *  (Basically takes this page out of the "page history" )
+								 */
+
+								//finish();
+							}
+							/* if sever returns false on registration, clear the CardNumber
+							 * and PIN field
+							 */
+							else {
+								// Print out a success message to the user's UI
+								ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
+								
+								editUsername.getText().clear();
+								editPassword.getText().clear();
+							}
 						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (ExecutionException e) {
-							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (JSONException e) {
 							e.printStackTrace();
 						}
-
-						ShowMessage( result, Toast.LENGTH_LONG );
 					}
 				});
 
+		// Event handler for the Register button
 		mRegisterBtn.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -97,6 +128,31 @@ public class LoginActivity extends Activity {
 						new Intent(getApplicationContext(), RegisterActivity.class);
 
 				startActivity(nextActivityIntent);
+			}
+		});
+
+		// logout button test
+		((Button)(findViewById(R.id.bUI_logoutBtn))).setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Logout = mUserControl.new Logout();
+				
+				Logout.execute();
+				
+				try {
+					JSONObject json = new JSONObject(Logout.get());
+					ShowMessage(json.toString(), Toast.LENGTH_LONG);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		});
 	} // End of onCreate function
