@@ -142,8 +142,6 @@ public class SplashScreen extends Activity {
 				}
 			});
 
-			//AlertDialog dialog = builder.create();
-			//dialog.show();
 			builder.create().show();
 			break;
 		}

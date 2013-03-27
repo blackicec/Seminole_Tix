@@ -23,6 +23,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -35,7 +39,9 @@ public class ListActivity extends Activity {
 	//private Constants.GetTable mGetTable;
 	private JSONObject[] Games = null;
 	GetGames games;
-	String error="ERROR!";
+	String error = "ERROR!";
+	
+	final int MESSAGE = 200;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +52,14 @@ public class ListActivity extends Activity {
 	//	mGetTable = new Constants.GetTable();
 	//	mGetTable.execute(Constants.GamesAddress);
 		
-		games=new GetGames();
-		games.execute();
+		games = new GetGames();
+		
 		try {
+			games.execute();
 			error=games.get();
-			Toast.makeText(getApplicationContext(), games.get(), Toast.LENGTH_LONG).show();
+			//Toast.makeText(getApplicationContext(), games.get(), Toast.LENGTH_LONG).show();
+			
+			showDialog(MESSAGE);
 	//		Games = mGetTable.get();
 
 	//		if(Games == null)
@@ -59,7 +68,7 @@ public class ListActivity extends Activity {
 			// pulling of information works fine
 			// Games[index].getString("FIELD_NAME")
 
-			for(int i = 0; i < Games.length; i++) {
+			/*for(int i = 0; i < Games.length; i++) {
 				Log.w("Games", Games[i].getString("_id"));
 				Log.w("Games", Games[i].getString("availableDate"));
 				Log.w("Games", Games[i].getString("full"));
@@ -67,15 +76,13 @@ public class ListActivity extends Activity {
 				Log.w("Games", Games[i].getString("seatsLeft"));
 				Log.w("Games", Games[i].getString("sport"));
 				Log.w("Games", Games[i].getString("teams[]"));
-			}
+			}*/
 
-		} catch(JSONException ex) {
-			Log.w("List Activity - mGetTable.getString()", ex.getMessage());
 		} catch(InterruptedException ex) {
 			Log.w("List Activity - mGetTable.execute()", ex.getMessage());
 		} catch(ExecutionException ex) {
 			Log.w("List Activity - mGetTable.execute()", ex.getMessage());
-		}	
+		}
 	}
 
 	@Override
@@ -84,12 +91,42 @@ public class ListActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_list, menu);
 		return true;
 	}
+	
+	@SuppressWarnings("deprecation")
+	@Override
+	protected Dialog onCreateDialog(int id) {
+
+		AlertDialog.Builder builder;
+
+		switch( id ) {
+
+		case MESSAGE: {
+			builder = new AlertDialog.
+					Builder(this);
+
+			builder.setCancelable(false).setTitle("Page Result").
+			setMessage(error).setNeutralButton("Close", 
+					new OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dismissDialog(MESSAGE);
+				}
+			});
+
+			builder.create().show();
+			break;
+		}
+
+		}
+		return super.onCreateDialog(id);
+	}
 
 	public void showDetails(View v) {
 		// check which details button called it
 		// open the corresponding details window
 	}
-
+	
 	class GetGames extends AsyncTask<Void, Void, String> {
 
 		@Override
@@ -104,72 +141,31 @@ public class ListActivity extends Activity {
 			// Create a new HttpClient and Post Header
 
 			//Creates a client
-			MyHttpClient client=new MyHttpClient(getApplicationContext());
+			MyHttpClient client=new MyHttpClient(null);
 
 			//sets cookie
 			client.setCookieStore(UserControl.mCookie);
 			// Prepare a request object
 			HttpGet httpget = new HttpGet(Constants.GamesAddress); 
-
 			
 			// Execute the request
 			HttpResponse response=null;
-			
-			
 
 			// return string
 			String returnString = null;
 
 			try {
-
 				// Open the web page.
 				response = client.execute(httpget);
+				returnString = EntityUtils.toString(response.getEntity());
 
-				if(response.getStatusLine().getStatusCode() == 200){
-					// Connection was established. Get the content. 
-
-					HttpEntity entity = response.getEntity();
-					// If the response does not enclose an entity, there is no need
-					// to worry about connection release
-
-					if (entity != null) {
-						// A Simple JSON Response Read
-						InputStream instream = entity.getContent();
-
-						JSONArray jsonArray = new JSONArray(Constants.convertStreamToString(instream));
-
-						// allocate space for the object array
-						jsonObjects = new JSONObject[jsonArray.length()];
-						for( int i = 0; i < jsonArray.length(); ++i) {
-							jsonObjects[i] = new JSONObject(jsonArray.optString(i));
-						} 
-
-						// Close the stream.
-						instream.close();
-					}
-				}
-				else {
-					// code here for a response other than 200.  A response 200 means the webpage was ok
-					// Other codes include 404 - not found, 301 - redirect etc...
-					// Display the response line.
-					returnString = "Unable to load page - " + response.getStatusLine();
-				}
 			}
 			catch (IOException  ex) {
 				// Connection was not established
 				returnString = "Connection failed; " + ex.getMessage();
 			}
-			catch (JSONException ex){
-				// JSON errors
-				returnString = "JSON failed; " + ex.getMessage();
-			}
 
-			return response.toString();
+			return returnString;
 		}
-
-		private DefaultHttpClient getNewHttpClient() {
-			// TODO Auto-generated method stub
-			return null;
-		}	
 	}
 }
