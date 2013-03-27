@@ -50,7 +50,7 @@ import android.provider.Settings.System;
 
 public class UserControl {
 
-	private static CookieStore mCookie = new BasicCookieStore();
+	public static CookieStore mCookie = new BasicCookieStore();
 
 	/***
 	 * @author blackice
