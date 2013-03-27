@@ -28,25 +28,33 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class ListActivity extends Activity {
 
-	private Constants.GetTable mGetTable;
+	//private Constants.GetTable mGetTable;
 	private JSONObject[] Games = null;
+	GetGames games;
+	String error="ERROR!";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-
-		mGetTable = new Constants.GetTable();
-		mGetTable.execute(Constants.GamesAddress);
-
+		
+		
+	//	mGetTable = new Constants.GetTable();
+	//	mGetTable.execute(Constants.GamesAddress);
+		
+		games=new GetGames();
+		games.execute();
 		try {
-			Games = mGetTable.get();
+			error=games.get();
+			Toast.makeText(getApplicationContext(), games.get(), Toast.LENGTH_LONG).show();
+	//		Games = mGetTable.get();
 
-			if(Games == null)
-				Log.w("List Activity", "Games is null");
+	//		if(Games == null)
+		//		Log.w("List Activity", "Games is null");
 
 			// pulling of information works fine
 			// Games[index].getString("FIELD_NAME")
@@ -82,10 +90,10 @@ public class ListActivity extends Activity {
 		// open the corresponding details window
 	}
 
-	class GetGames extends AsyncTask<Void, Void, JSONObject[]> {
+	class GetGames extends AsyncTask<Void, Void, String> {
 
 		@Override
-		protected JSONObject[] doInBackground(Void... params) {
+		protected String doInBackground(Void... params) {
 
 			// create an array of json objects that will be returned
 			JSONObject[] jsonObjects = null;
@@ -98,11 +106,16 @@ public class ListActivity extends Activity {
 			//Creates a client
 			MyHttpClient client=new MyHttpClient(getApplicationContext());
 
+			//sets cookie
+			client.setCookieStore(UserControl.mCookie);
 			// Prepare a request object
 			HttpGet httpget = new HttpGet(Constants.GamesAddress); 
 
+			
 			// Execute the request
 			HttpResponse response=null;
+			
+			
 
 			// return string
 			String returnString = null;
@@ -151,7 +164,7 @@ public class ListActivity extends Activity {
 				returnString = "JSON failed; " + ex.getMessage();
 			}
 
-			return jsonObjects;
+			return response.toString();
 		}
 
 		private DefaultHttpClient getNewHttpClient() {
