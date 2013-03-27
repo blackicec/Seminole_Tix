@@ -205,16 +205,16 @@ public class UserControl {
 
 			DefaultHttpClient client = getNewHttpClient();
 			client.setCookieStore(mCookie);
-			
+
 			HttpGet get = new HttpGet(Constants.LogoutAddress);
 			HttpResponse response = null;
 			String responseMessage = null;
-			
+
 			try {
-				
+
 				response = client.execute(get);
 				responseMessage = EntityUtils.toString(response.getEntity());
-				
+
 			} catch (ClientProtocolException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -222,7 +222,7 @@ public class UserControl {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			return responseMessage;
 		}
 

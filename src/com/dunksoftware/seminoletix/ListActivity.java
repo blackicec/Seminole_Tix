@@ -9,10 +9,12 @@ import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
@@ -36,6 +38,8 @@ import android.view.View;
 import android.widget.Button;
 
 public class ListActivity extends Activity {
+	
+	
 	
 	private Constants.GetTable mGetTable;
 	private JSONObject[] Games = null;
@@ -66,13 +70,21 @@ public class ListActivity extends Activity {
 					JSONObject[] jsonObjects = null;
 
 					// Create the httpclient
-					HttpClient httpclient = new DefaultHttpClient();
+					//HttpClient httpclient = new DefaultHttpClient();
 
+					
+					
+					// Create a new HttpClient and Post Header
+				
+					//Creates a client
+					MyHttpClient client=new MyHttpClient(getApplicationContext());
+					
+			
 					// Prepare a request object
 					HttpGet httpget = new HttpGet(Constants.GamesAddress); 
 
 					// Execute the request
-					HttpResponse response;
+					HttpResponse response=null;
 
 					// return string
 					String returnString = null;
@@ -80,7 +92,7 @@ public class ListActivity extends Activity {
 					try {
 
 						// Open the web page.
-						response = httpclient.execute(httpget);
+						response = client.execute(httpget);
 
 						if(response.getStatusLine().getStatusCode() == 200){
 							// Connection was established. Get the content. 
@@ -123,6 +135,16 @@ public class ListActivity extends Activity {
 
 					return jsonObjects;
 				}
+
+				private DefaultHttpClient getNewHttpClient() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+				
+				
+				
+				
+				
 			}
 
 			
