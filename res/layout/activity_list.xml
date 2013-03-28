@@ -57,7 +57,7 @@
         android:text="Opponent"
         android:textSize="30sp" />
 
-    <TextView
+    <EditText
         android:id="@+id/TextViewSPORT"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -67,8 +67,8 @@
         android:text="Sport"
         android:textSize="30sp" />
 
-    <EditText
-        android:id="@+id/editText1"
+    <TextView
+        android:id="@+id/dateText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/TextViewDate"
@@ -79,27 +79,27 @@
         android:textColorLink="@android:color/white" >
 
         <requestFocus />
-    </EditText>
+    </TextView>
 
-    <EditText
-        android:id="@+id/EditText01"
+    <TextView
+        android:id="@+id/opponentText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/TextViewOpponent"
         android:layout_alignBottom="@+id/TextViewOpponent"
-        android:layout_alignLeft="@+id/editText1"
+        android:layout_alignLeft="@+id/dateText"
         android:layout_alignParentRight="true"
         android:ems="10"
         android:inputType="date"
         android:textColorLink="@android:color/white" />
 
-    <EditText
-        android:id="@+id/EditText02"
+    <TextView
+        android:id="@+id/sportText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/TextViewSPORT"
         android:layout_alignBottom="@+id/TextViewSPORT"
-        android:layout_alignLeft="@+id/EditText01"
+        android:layout_alignLeft="@+id/opponentText"
         android:layout_alignParentRight="true"
         android:ems="10"
         android:inputType="date"
