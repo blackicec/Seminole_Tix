@@ -32,41 +32,72 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ListActivity extends Activity {
 
-	//private Constants.GetTable mGetTable;
+	private Constants.GetTable mGetTable;
 	private JSONObject[] Games = null;
 	GetGames games;
-	String error = "ERROR!";
+	String response = "ERROR!";
+	
+	private TextView EditDateText,
+	EditOpponentText,
+	EditSportText;
 	
 	final int MESSAGE = 200;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		
+		// Link all UI widgets to reference variables
+		EditDateText = (TextView)findViewById(R.id.dateText);
+		EditOpponentText = (TextView)findViewById(R.id.opponentText);
+		EditSportText = (TextView)findViewById(R.id.sportText);
+		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
 		
 		
-	//	mGetTable = new Constants.GetTable();
-	//	mGetTable.execute(Constants.GamesAddress);
+		//mGetTable = new Constants.GetTable();
+		//mGetTable.execute(Constants.GamesAddress);
 		
 		games = new GetGames();
 		
 		try {
 			games.execute();
-			error=games.get();
+			response=games.get();
 			//Toast.makeText(getApplicationContext(), games.get(), Toast.LENGTH_LONG).show();
 			
+			JSONArray gamesArray=new JSONArray(response);
+			for(int i=0;i<gamesArray.length();i++)
+			{
+				JSONObject gamesJson=gamesArray.getJSONObject(i);
+				
+				
+			}
+			
+			
+			//JSONObject[] teams=new JSONObject(gamesArray[0].getString("teams[]"));
+			
+			EditDateText.setText("availabledate");
+			EditOpponentText.setText("");
+			EditSportText.setText("sport");
+			
+			
+			
+			
+			
 			showDialog(MESSAGE);
-	//		Games = mGetTable.get();
+		//Games = mGetTable.get();
 
-	//		if(Games == null)
-		//		Log.w("List Activity", "Games is null");
+			//if(Games == null)
+				//Log.w("List Activity", "Games is null");
 
-			// pulling of information works fine
-			// Games[index].getString("FIELD_NAME")
+			 //pulling of information works fine
+			 //Games[index].getString("FIELD_NAME")
 
 			/*for(int i = 0; i < Games.length; i++) {
 				Log.w("Games", Games[i].getString("_id"));
@@ -76,12 +107,26 @@ public class ListActivity extends Activity {
 				Log.w("Games", Games[i].getString("seatsLeft"));
 				Log.w("Games", Games[i].getString("sport"));
 				Log.w("Games", Games[i].getString("teams[]"));
+				
 			}*/
+			//JSONObject[] teams=new JSONObject(Games[0].getString("teams[]"));
+			
+			
+		//	EditDateText.setText(Games[0].getString("availableDate"));
+		//	EditOpponentText.setText(teams[1].getString("away"));
+		//	EditSportText.setText(Games[0].getString("sport"));
+			
 
 		} catch(InterruptedException ex) {
 			Log.w("List Activity - mGetTable.execute()", ex.getMessage());
 		} catch(ExecutionException ex) {
 			Log.w("List Activity - mGetTable.execute()", ex.getMessage());
+		//} //catch (JSONException e) {
+			// TODO Auto-generated catch block
+		//	e.printStackTrace();
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -105,7 +150,7 @@ public class ListActivity extends Activity {
 					Builder(this);
 
 			builder.setCancelable(false).setTitle("Page Result").
-			setMessage(error).setNeutralButton("Close", 
+			setMessage(response).setNeutralButton("Close", 
 					new OnClickListener() {
 
 				@Override
