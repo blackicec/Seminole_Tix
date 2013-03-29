@@ -26,29 +26,25 @@ import org.apache.http.impl.conn.SingleClientConnManager;
 import android.content.Context;
 
 public class MyHttpClient extends DefaultHttpClient {
-	final Context context;
-	TrustManager easyTrustManager = new X509TrustManager() {
+  final Context context;
+
+  TrustManager easyTrustManager = new X509TrustManager() {
     @Override
-    public void checkClientTrusted(
-            X509Certificate[] chain,
-            String authType) throws CertificateException {
-    }
+    public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
 
     @Override
-    public void checkServerTrusted(
-            X509Certificate[] chain,
-            String authType) throws CertificateException {
-    }
+    public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
 
     @Override
-    public X509Certificate[] getAcceptedIssuers() {
-        return null;
-    }    
-};
+    public X509Certificate[] getAcceptedIssuers() { return null; }    
+  };
+
+  // simple constructor
   public MyHttpClient(Context context) {
     this.context = context;
   }
 
+  // this is the important part, override the connection manager creater to use a customized ssl socket
   @Override protected ClientConnectionManager createClientConnectionManager() {
     SchemeRegistry registry = new SchemeRegistry();
     registry.register(
@@ -57,7 +53,7 @@ public class MyHttpClient extends DefaultHttpClient {
     return new SingleClientConnManager(getParams(), registry);
   }
 
-
+  // private function that produces a custom ssl socket creater
   private MySSLSocketFactory newSslSocketFactory() {
     try {
       KeyStore trusted = KeyStore.getInstance("BKS");      
@@ -67,6 +63,7 @@ public class MyHttpClient extends DefaultHttpClient {
       } finally {
       }
 
+      // create custom ssl socket and instruct it to allow all hostnames
       MySSLSocketFactory sslfactory =  new MySSLSocketFactory(trusted);
         sslfactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
         return sslfactory;
@@ -75,35 +72,30 @@ public class MyHttpClient extends DefaultHttpClient {
     }
 
   }
+  
   public class MySSLSocketFactory extends SSLSocketFactory {
-        SSLContext sslContext = SSLContext.getInstance("TLS");
+    SSLContext sslContext = SSLContext.getInstance("TLS");
 
-        public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
-            super(truststore);
+    public MySSLSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+      super(truststore);
 
-            TrustManager tm = new X509TrustManager() {
-                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
+      TrustManager tm = new X509TrustManager() {
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
+	public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException { }
+	public X509Certificate[] getAcceptedIssuers() { return null; }
+      };
 
-                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-                }
-
-                public X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
-            };
-
-            sslContext.init(null, new TrustManager[] { tm }, null);
-        }
-
-        @Override
-        public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
-            return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
-        }
-
-        @Override
-        public Socket createSocket() throws IOException {
-            return sslContext.getSocketFactory().createSocket();
-        }
+      sslContext.init(null, new TrustManager[] { tm }, null);
     }
-   }
+
+    @Override
+    public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+      return sslContext.getSocketFactory().createSocket(socket, host, port, autoClose);
+    }
+
+    @Override
+    public Socket createSocket() throws IOException {
+      return sslContext.getSocketFactory().createSocket();
+    }
+  }
+}
