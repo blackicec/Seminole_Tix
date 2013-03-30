@@ -39,65 +39,77 @@ import android.widget.Toast;
 public class ListActivity extends Activity {
 
 	private Constants.GetTable mGetTable;
-	private JSONObject[] Games = null;
+	private JSONObject[] GameObjects = null;
 	GetGames games;
 	String response = "ERROR!";
-	
+
 	private TextView EditDateText,
 	EditOpponentText,
 	EditSportText;
-	
+
 	final int MESSAGE = 200;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		
-		// Link all UI widgets to reference variables
-		EditDateText = (TextView)findViewById(R.id.dateText);
-		EditOpponentText = (TextView)findViewById(R.id.opponentText);
-		EditSportText = (TextView)findViewById(R.id.sportText);
-		
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		
-		
+
+		// Link all UI widgets to reference variables
+		EditDateText = (TextView)findViewById(R.id.TextViewDate);
+		EditOpponentText = (TextView)findViewById(R.id.TextViewOpponent);
+		EditSportText = (TextView)findViewById(R.id.TextViewSPORT);
+
+
 		//mGetTable = new Constants.GetTable();
 		//mGetTable.execute(Constants.GamesAddress);
-		
+
 		games = new GetGames();
-		
+
 		try {
 			games.execute();
 			response=games.get();
-			//Toast.makeText(getApplicationContext(), games.get(), Toast.LENGTH_LONG).show();
+			
+			// Show the popup box (for display testing)
+			showDialog(MESSAGE);
 			
 			JSONArray gamesArray=new JSONArray(response);
+			
+			// Allocate space for all JSON objects embedded in the JSON array
+			GameObjects = new JSONObject[gamesArray.length()];
+
+			// Transfer each object in this JSONArray into its own object
 			for(int i=0;i<gamesArray.length();i++)
-			{
-				JSONObject gamesJson=gamesArray.getJSONObject(i);
-				
-				
-			}
+				GameObjects[i] = gamesArray.getJSONObject(i);
+
+			/*
+			 * Value keys to get from each JSONObject:full(boolean), 
+			 * availableDate, date, seats, seatsLeft, sport,
+			 * teams:object{home, away}.
+			 * 
+			 * Notice how the date format in the JSONObject's format is
+			 * 
+			 * YYYY-MM-DD"T(time)"HH(in military time)-MM-SS.000Z
+			 * This is not user friendly, so it will have to be formatted in
+			 * this code. Break the Date string at T first. There is a function
+			 * called "split" in the string class that does this task. Then
+			 * break the date and maybe show an actual month in this formatting.
+			 * Time "T" should be done with the same process, split.
+			 */
 			
 			
-			//JSONObject[] teams=new JSONObject(gamesArray[0].getString("teams[]"));
-			
+
 			EditDateText.setText("availabledate");
 			EditOpponentText.setText("");
 			EditSportText.setText("sport");
 			
-			
-			
-			
-			
-			showDialog(MESSAGE);
-		//Games = mGetTable.get();
+			//Games = mGetTable.get();
 
 			//if(Games == null)
-				//Log.w("List Activity", "Games is null");
+			//Log.w("List Activity", "Games is null");
 
-			 //pulling of information works fine
-			 //Games[index].getString("FIELD_NAME")
+			//pulling of information works fine
+			//Games[index].getString("FIELD_NAME")
 
 			/*for(int i = 0; i < Games.length; i++) {
 				Log.w("Games", Games[i].getString("_id"));
@@ -107,23 +119,23 @@ public class ListActivity extends Activity {
 				Log.w("Games", Games[i].getString("seatsLeft"));
 				Log.w("Games", Games[i].getString("sport"));
 				Log.w("Games", Games[i].getString("teams[]"));
-				
+
 			}*/
 			//JSONObject[] teams=new JSONObject(Games[0].getString("teams[]"));
-			
-			
-		//	EditDateText.setText(Games[0].getString("availableDate"));
-		//	EditOpponentText.setText(teams[1].getString("away"));
-		//	EditSportText.setText(Games[0].getString("sport"));
-			
+
+
+			//	EditDateText.setText(Games[0].getString("availableDate"));
+			//	EditOpponentText.setText(teams[1].getString("away"));
+			//	EditSportText.setText(Games[0].getString("sport"));
+
 
 		} catch(InterruptedException ex) {
 			Log.w("List Activity - mGetTable.execute()", ex.getMessage());
 		} catch(ExecutionException ex) {
 			Log.w("List Activity - mGetTable.execute()", ex.getMessage());
-		//} //catch (JSONException e) {
+			//} //catch (JSONException e) {
 			// TODO Auto-generated catch block
-		//	e.printStackTrace();
+			//	e.printStackTrace();
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -136,7 +148,7 @@ public class ListActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_list, menu);
 		return true;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -155,7 +167,7 @@ public class ListActivity extends Activity {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					
+
 				}
 			});
 
@@ -171,7 +183,7 @@ public class ListActivity extends Activity {
 		// check which details button called it
 		// open the corresponding details window
 	}
-	
+
 	class GetGames extends AsyncTask<Void, Void, String> {
 
 		@Override
@@ -192,7 +204,7 @@ public class ListActivity extends Activity {
 			client.setCookieStore(UserControl.mCookie);
 			// Prepare a request object
 			HttpGet httpget = new HttpGet(Constants.GamesAddress); 
-			
+
 			// Execute the request
 			HttpResponse response=null;
 
