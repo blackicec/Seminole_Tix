@@ -1,40 +1,30 @@
 package com.dunksoftware.seminoletix;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.CookieStore;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicCookieStore;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-import android.os.AsyncTask;
-import android.util.Log;
 import java.util.concurrent.ExecutionException;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ListActivity extends Activity {
 
@@ -47,8 +37,11 @@ public class ListActivity extends Activity {
 	private TextView EditDateText,
 	EditOpponentText,
 	EditSportText;
+	
+	TableLayout mainTable;
 
-	final int MESSAGE = 200;
+	final int MESSAGE = 200, 
+			DETAILS_POPUP = 250;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -58,26 +51,25 @@ public class ListActivity extends Activity {
 
 		// Link all UI widgets to reference variables
 
-		EditDateText = (TextView)findViewById(R.id.TextViewDate);
-		EditOpponentText = (TextView)findViewById(R.id.TextViewOpponent);
-		EditSportText = (TextView)findViewById(R.id.TextViewSPORT);
+		//EditDateText = (TextView)findViewById(R.id.TextViewDate);
+		//EditOpponentText = (TextView)findViewById(R.id.TextViewOpponent);
+		//EditSportText = (TextView)findViewById(R.id.TextViewSPORT);
 
-		EditDateText = (TextView)findViewById(R.id.dateText);
-		EditOpponentText = (TextView)findViewById(R.id.opponentText);
-		EditSportText = (TextView)findViewById(R.id.sportText);
+		//EditDateText = (TextView)findViewById(R.id.dateText);
+		//EditOpponentText = (TextView)findViewById(R.id.opponentText);
+		//EditSportText = (TextView)findViewById(R.id.sportText);
 
-
-
+		mainTable = (TableLayout)findViewById(R.id.UI_MainTableLayout);
 		//mGetTable = new Constants.GetTable();
 		//mGetTable.execute(Constants.GamesAddress);
-
+		
 		games = new GetGames();
 
 		try {
 			games.execute();
 			response=games.get();
 			
-			// Show the popup box (for display testing)
+			// Show the pop-up box (for display testing)
 			showDialog(MESSAGE);
 			
 			JSONArray gamesArray=new JSONArray(response);
@@ -106,47 +98,64 @@ public class ListActivity extends Activity {
 			 */
 			
 
-			
-
-			EditDateText.setText("availabledate");
+			/*EditDateText.setText("availabledate");
 			EditOpponentText.setText("");
-			EditSportText.setText("sport");
+			EditSportText.setText("sport");*/
 			
 			//Games = mGetTable.get();
 
-
-			String sport="";
-			String date="";
-			String opponent="";
-			
-			JSONObject teamsObjects=null;
-			
-			//gets the information from the JSON
-			for(int i=0;i<gamesArray.length();i++)
-			{
-				sport=GameObjects[i].getString("sport");
-				date=GameObjects[i].getString("availableDate");
-				opponent=GameObjects[i].getString("teams");
-				teamsObjects=GameObjects[i].getJSONObject("teams");
+			for(int i = 0; i < gamesArray.length(); i++) {
+				TableRow gameTableRow = new TableRow(this);
+				LinearLayout list = new LinearLayout(this);
+				Button detailsButton = new Button(this);
+				TextView[] info = new TextView[4];
 				
+				// set the list to a top down look
+				list.setOrientation(LinearLayout.VERTICAL);
+				detailsButton.setText("More Details");
 				
+				info[0] = new TextView(this);
+				info[0].setText("Sport:\t\t" + GameObjects[i].getString("sport"));
+				
+				list.addView(info[0]);
+				
+				info[1] = new TextView(this);
+				//Format the date so that it is appropriate
+				String[] parsedDate;
+				String dateTime = GameObjects[i].getString("availableDate");
+				parsedDate = dateTime.split("T");
+				String date = parsedDate[0];
+				
+				info[1].setText("Game Date:\t\t" + date);
+				
+				list.addView(info[1]);
+				
+				info[2] = new TextView(this);
+				info[2].setText("Home:\t\t" + GameObjects[i].getJSONObject("teams")
+													.getString("home").toUpperCase());
+				
+				list.addView(info[2]);
+				
+				info[3] = new TextView(this);
+				info[3].setText("Opponent:\t\t" + GameObjects[i].getJSONObject("teams")
+						.getString("away").toUpperCase());
+				
+				list.addView(info[3]);
+				
+				// add the button to display details for each game
+				// might have to add tag to button
+				list.addView(detailsButton);
+				
+				list.setPadding(0, 5, 0, 20);
+				gameTableRow.addView(list);
+				
+				mainTable.addView(gameTableRow);
 			}
 			
-			//gets the away team from the JSON
-			opponent=teamsObjects.getString("away");
-			
-			
-			
-			//Formats the date so that it is appropriate
-			String[] parsedDate;
-			parsedDate=date.split("T");
-			String part1=parsedDate[0];
-			
-
 			//Sets it the UI
-			EditDateText.setText(part1);
+			/*EditDateText.setText(part1);
 			EditOpponentText.setText(opponent);
-			EditSportText.setText(sport);
+			EditSportText.setText(sport);*/
 			
 			//Games = mGetTable.get();
 

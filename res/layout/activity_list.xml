@@ -1,111 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ScrollWrap"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ListActivity" >
+    android:layout_height="match_parent" >
 
-    <ScrollView
-        android:id="@+id/scrollView1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true" >
+    <TableLayout
+        android:id="@+id/UI_MainTableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ListActivity" >
+    </TableLayout>
 
-        <TableLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical"
-            android:padding="10dip" >
-
-            <TableRow
-                android:id="@+id/tableRow1"
-                android:layout_width="fill_parent"
-                android:layout_height="300dp"
-                android:orientation="vertical" >
-            </TableRow>
-        </TableLayout>
-    </ScrollView>
-
-    <Button
-        android:id="@+id/ButtonDetails"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="30dp"
-        android:minHeight="0dp"
-        android:onClick="showDetails"
-        android:text="Details"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/TextViewDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="28dp"
-        android:text="Date"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/TextViewOpponent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/TextViewDate"
-        android:layout_marginTop="72dp"
-        android:text="Opponent"
-        android:textSize="30sp" />
-
-    <EditText
-        android:id="@+id/TextViewSPORT"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/TextViewOpponent"
-        android:layout_marginTop="66dp"
-        android:text="Sport"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/dateText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/TextViewDate"
-        android:layout_alignBottom="@+id/TextViewDate"
-        android:layout_toRightOf="@+id/ButtonDetails"
-        android:ems="10"
-        android:inputType="date"
-        android:textColorLink="@android:color/white" 
-        android:textSize="30sp">
-
-        <requestFocus />
-    </TextView>
-
-    <TextView
-        android:id="@+id/opponentText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/TextViewOpponent"
-        android:layout_alignBottom="@+id/TextViewOpponent"
-        android:layout_alignLeft="@+id/dateText"
-        android:layout_alignParentRight="true"
-        android:ems="10"
-        android:inputType="date"
-        android:textColorLink="@android:color/white" 
-        android:textSize="30sp"/>
-
-    <TextView
-        android:id="@+id/sportText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/TextViewSPORT"
-        android:layout_alignBottom="@+id/TextViewSPORT"
-        android:layout_alignLeft="@+id/opponentText"
-        android:layout_alignParentRight="true"
-        android:ems="10"
-        android:inputType="date"
-        android:textColorLink="@android:color/white"
-        android:textSize="30sp" />
-
-</RelativeLayout>
+</ScrollView>
