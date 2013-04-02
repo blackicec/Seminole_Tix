@@ -40,6 +40,7 @@ public class ListActivity extends Activity {
 
 	private Constants.GetTable mGetTable;
 	private JSONObject[] GameObjects = null;
+
 	GetGames games;
 	String response = "ERROR!";
 
@@ -56,9 +57,15 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.activity_list);
 
 		// Link all UI widgets to reference variables
+
 		EditDateText = (TextView)findViewById(R.id.TextViewDate);
 		EditOpponentText = (TextView)findViewById(R.id.TextViewOpponent);
 		EditSportText = (TextView)findViewById(R.id.TextViewSPORT);
+
+		EditDateText = (TextView)findViewById(R.id.dateText);
+		EditOpponentText = (TextView)findViewById(R.id.opponentText);
+		EditSportText = (TextView)findViewById(R.id.sportText);
+
 
 
 		//mGetTable = new Constants.GetTable();
@@ -82,6 +89,7 @@ public class ListActivity extends Activity {
 			for(int i=0;i<gamesArray.length();i++)
 				GameObjects[i] = gamesArray.getJSONObject(i);
 
+
 			/*
 			 * Value keys to get from each JSONObject:full(boolean), 
 			 * availableDate, date, seats, seatsLeft, sport,
@@ -97,6 +105,7 @@ public class ListActivity extends Activity {
 			 * Time "T" should be done with the same process, split.
 			 */
 			
+
 			
 
 			EditDateText.setText("availabledate");
@@ -104,6 +113,43 @@ public class ListActivity extends Activity {
 			EditSportText.setText("sport");
 			
 			//Games = mGetTable.get();
+
+
+			String sport="";
+			String date="";
+			String opponent="";
+			
+			JSONObject teamsObjects=null;
+			
+			//gets the information from the JSON
+			for(int i=0;i<gamesArray.length();i++)
+			{
+				sport=GameObjects[i].getString("sport");
+				date=GameObjects[i].getString("availableDate");
+				opponent=GameObjects[i].getString("teams");
+				teamsObjects=GameObjects[i].getJSONObject("teams");
+				
+				
+			}
+			
+			//gets the away team from the JSON
+			opponent=teamsObjects.getString("away");
+			
+			
+			
+			//Formats the date so that it is appropriate
+			String[] parsedDate;
+			parsedDate=date.split("T");
+			String part1=parsedDate[0];
+			
+
+			//Sets it the UI
+			EditDateText.setText(part1);
+			EditOpponentText.setText(opponent);
+			EditSportText.setText(sport);
+			
+			//Games = mGetTable.get();
+
 
 			//if(Games == null)
 			//Log.w("List Activity", "Games is null");
