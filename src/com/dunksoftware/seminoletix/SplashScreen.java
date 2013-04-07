@@ -82,8 +82,8 @@ public class SplashScreen extends Activity {
 						});
 
 						startActivity(new Intent(getApplicationContext(), 
-								LoginActivity.class));
-
+						 		LoginActivity.class));
+						 
 						/* close this activity for good (remove it from the 
 						 * bread crumb trail 
 						 */
