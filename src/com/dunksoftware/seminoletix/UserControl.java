@@ -11,11 +11,9 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpVersion;
 import org.apache.http.NameValuePair;
@@ -45,9 +43,6 @@ public class UserControl {
 
 	public static CookieStore mCookie = new BasicCookieStore();
 
-	/***
-	 * @author blackice
-	 */
 	public static class RegisterUser extends AsyncTask<Void, Void, String> {
 
 
@@ -215,14 +210,10 @@ public class UserControl {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-
 			return responseMessage;
 		}
-
 	}
 	
-	
-
 	public class MySSLSocketFactory extends SSLSocketFactory {
 		SSLContext sslContext = SSLContext.getInstance("TLS");
 

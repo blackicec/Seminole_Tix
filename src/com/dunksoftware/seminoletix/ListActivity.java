@@ -49,19 +49,7 @@ public class ListActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
 
-		// Link all UI widgets to reference variables
-
-		//EditDateText = (TextView)findViewById(R.id.TextViewDate);
-		//EditOpponentText = (TextView)findViewById(R.id.TextViewOpponent);
-		//EditSportText = (TextView)findViewById(R.id.TextViewSPORT);
-
-		//EditDateText = (TextView)findViewById(R.id.dateText);
-		//EditOpponentText = (TextView)findViewById(R.id.opponentText);
-		//EditSportText = (TextView)findViewById(R.id.sportText);
-
 		mainTable = (TableLayout)findViewById(R.id.UI_MainTableLayout);
-		//mGetTable = new Constants.GetTable();
-		//mGetTable.execute(Constants.GamesAddress);
 		
 		games = new GetGames();
 
@@ -151,39 +139,6 @@ public class ListActivity extends Activity {
 				
 				mainTable.addView(gameTableRow);
 			}
-			
-			//Sets it the UI
-			/*EditDateText.setText(part1);
-			EditOpponentText.setText(opponent);
-			EditSportText.setText(sport);*/
-			
-			//Games = mGetTable.get();
-
-
-			//if(Games == null)
-			//Log.w("List Activity", "Games is null");
-
-			//pulling of information works fine
-			//Games[index].getString("FIELD_NAME")
-
-			/*for(int i = 0; i < Games.length; i++) {
-				Log.w("Games", Games[i].getString("_id"));
-				Log.w("Games", Games[i].getString("availableDate"));
-				Log.w("Games", Games[i].getString("full"));
-				Log.w("Games", Games[i].getString("seats"));
-				Log.w("Games", Games[i].getString("seatsLeft"));
-				Log.w("Games", Games[i].getString("sport"));
-				Log.w("Games", Games[i].getString("teams[]"));
-
-			}*/
-			//JSONObject[] teams=new JSONObject(Games[0].getString("teams[]"));
-
-
-			//	EditDateText.setText(Games[0].getString("availableDate"));
-			//	EditOpponentText.setText(teams[1].getString("away"));
-			//	EditSportText.setText(Games[0].getString("sport"));
-
-
 		} catch(InterruptedException ex) {
 			Log.w("List Activity - mGetTable.execute()", ex.getMessage());
 		} catch(ExecutionException ex) {
@@ -229,7 +184,6 @@ public class ListActivity extends Activity {
 			builder.create().show();
 			break;
 		}
-
 		}
 		return super.onCreateDialog(id);
 	}
@@ -244,15 +198,7 @@ public class ListActivity extends Activity {
 		@Override
 		protected String doInBackground(Void... params) {
 
-			// create an array of json objects that will be returned
-			JSONObject[] jsonObjects = null;
-
-			// Create the httpclient
-			//HttpClient httpclient = new DefaultHttpClient();
-
 			// Create a new HttpClient and Post Header
-
-			//Creates a client
 			MyHttpClient client=new MyHttpClient(null);
 
 			//sets cookie
@@ -276,7 +222,6 @@ public class ListActivity extends Activity {
 				// Connection was not established
 				returnString = "Connection failed; " + ex.getMessage();
 			}
-
 			return returnString;
 		}
 	}

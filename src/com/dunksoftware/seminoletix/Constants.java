@@ -33,17 +33,21 @@ public class Constants {
 		
 		@Override
 		protected JSONObject[] doInBackground(String... params) {
+			
 			// create an array of json objects that will be returned
 			JSONObject[] jsonObjects = null;
+			
 			// Create the httpclient
-			//HttpClient httpclient = new DefaultHttpClient();
 			HttpClient httpclient = new MyHttpClient(null);
+			
 			// set timeout to 10 seconds
 			final HttpParams httpparams = httpclient.getParams();
 			HttpConnectionParams.setConnectionTimeout(httpparams, 10000);
 			HttpConnectionParams.setSoTimeout(httpparams, 10000);
+			
 			// Prepare a request object
 			Log.w("Constants - GetTable.execute()", params[0]);
+			
 			HttpGet httpget = new HttpGet(params[0]); 
 			// Execute the request
 			HttpResponse response;

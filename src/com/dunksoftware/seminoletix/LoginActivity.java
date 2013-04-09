@@ -1,17 +1,22 @@
 package com.dunksoftware.seminoletix;
 
 import java.util.concurrent.ExecutionException;
-
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -38,6 +43,7 @@ public class LoginActivity extends Activity {
 	private UserControl.Login Login;
 	private UserControl.Logout Logout;
 
+	public static final int NO_CONNECTION_DIALOG = 80;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +65,7 @@ public class LoginActivity extends Activity {
 
 		// set anonymous onclick listeners for registration and login buttons
 		mLoginBtn.setOnClickListener(
-				new OnClickListener() {
+				new View.OnClickListener() {
 
 					// email, cardNum, password, remember_me
 					@Override
@@ -71,75 +77,86 @@ public class LoginActivity extends Activity {
 						if( ((CheckBox)findViewById(R.id.UI_CheckRememberMe)).isChecked()) {
 							Login = mUserControl.new Login(mUserResponse, mPassResponse, true);
 
-							ShowMessage("Is selected", Toast.LENGTH_SHORT);
+							ShowMessage("You will be remembered.", Toast.LENGTH_SHORT);
 						}
-						else
-							Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
+						else {
 
-						Login.execute();
+							if( !Online() ) 
+								showDialog(NO_CONNECTION_DIALOG);
 
-						//ShowMessage("Error occurred with login.", Toast.LENGTH_LONG );
-
-						try {
-							JSONObject JSONresponse = new JSONObject(Login.get());
-
-							// Send the user back to the login page.
-							if( JSONresponse.getString("success").equals("true")) {
-
-								startActivity(new Intent(getApplicationContext(), 
-										ListActivity.class));
-								
-								ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
-
-								/* Close the current activity, ensuring that this
-								 *  SAME page cannot be reached via Back button, 
-								 *  once a user has successfully registered. 
-								 *  (Basically takes this page out of the "page history" )
-								 */
-
-								//finish();
-							}
-							/* if sever returns false on registration, clear the CardNumber
-							 * and PIN field
-							 */
 							else {
-								// Print out a success message to the user's UI
-								ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
-								
-								editUsername.getText().clear();
-								editPassword.getText().clear();
+								Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
+								Login.execute();
+
+								try {
+									JSONObject JSONresponse = new JSONObject(Login.get());
+
+									// Send the user back to the login page.
+									if( JSONresponse.getString("success").equals("true")) {
+
+										startActivity(new Intent(getApplicationContext(), 
+												ListActivity.class));
+
+										ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
+
+										/* Close the current activity, ensuring that this
+										 *  SAME page cannot be reached via Back button, 
+										 *  once a user has successfully registered. 
+										 *  (Basically takes this page out of the "page history" )
+										 */
+
+										//finish();
+									}
+									/* if server returns false on registration, clear the CardNumber
+									 * and PIN field
+									 */
+									else {
+										// Print out a success message to the user's UI
+										ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
+
+										editUsername.getText().clear();
+										editPassword.getText().clear();
+									}
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								} catch (ExecutionException e) {
+									e.printStackTrace();
+								} catch (JSONException e) {
+									e.printStackTrace();
+								}
 							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						} catch (ExecutionException e) {
-							e.printStackTrace();
-						} catch (JSONException e) {
-							e.printStackTrace();
 						}
 					}
 				});
 
 		// Event handler for the Register button
-		mRegisterBtn.setOnClickListener(new OnClickListener() {
+		mRegisterBtn.setOnClickListener(new View.OnClickListener() {
 
 			@Override
 			public void onClick(View arg0) {
-				Intent nextActivityIntent = 
-						new Intent(getApplicationContext(), RegisterActivity.class);
 
-				startActivity(nextActivityIntent);
+				if( !Online() ) 
+					showDialog(NO_CONNECTION_DIALOG);
+
+				else {
+					Intent nextActivityIntent = 
+							new Intent(getApplicationContext(), RegisterActivity.class);
+
+					startActivity(nextActivityIntent);
+				}
 			}
 		});
 
 		// logout button test
-		((Button)(findViewById(R.id.bUI_logoutBtn))).setOnClickListener(new OnClickListener() {
-			
+		((Button)(findViewById(R.id.bUI_logoutBtn)))
+		.setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				Logout = mUserControl.new Logout();
-				
+
 				Logout.execute();
-				
+
 				try {
 					JSONObject json = new JSONObject(Logout.get());
 					ShowMessage(json.toString(), Toast.LENGTH_LONG);
@@ -174,7 +191,44 @@ public class LoginActivity extends Activity {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
+	@Override
+	protected Dialog onCreateDialog(int id) {
+
+		AlertDialog.Builder builder;
+
+		switch( id ) {
+
+		case NO_CONNECTION_DIALOG: {
+			builder = new AlertDialog.
+					Builder(this);
+
+			builder.setCancelable(false).setTitle("Connection Error").
+			setMessage(R.string.Error_NoConnection).setNeutralButton("Close", 
+					new DialogInterface.OnClickListener() {
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					removeDialog(NO_CONNECTION_DIALOG);
+					finish();
+				}
+			});
+
+			builder.create().show();
+			break;
+		}
+		}
+		return super.onCreateDialog(id);
+	}
+
 	void ShowMessage(String message, int length) {
 		Toast.makeText(getApplicationContext(), message, length).show();
+	}
+
+	private boolean Online() {
+		ConnectivityManager connectivityManager 
+		= (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+		return activeNetworkInfo != null && activeNetworkInfo.isConnected();
 	}
 }
