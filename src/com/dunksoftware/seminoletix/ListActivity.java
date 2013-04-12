@@ -36,8 +36,14 @@ public class ListActivity extends Activity {
 
 	private GetGames games;
 	private GetCurrentUser getCurrentUser;
-	private String response = "ERROR!",
-			currentUser;
+	private String response = "ERROR!";
+	
+	private String homeTeam,
+		awayTeam,
+		sportType,
+		date;
+	
+	private int remainingSeats = 0;
 
 	private TableLayout mainTable;
 
@@ -53,6 +59,8 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.activity_list);
 		
 		TextView welcomeMsg = (TextView)findViewById(R.id.UI_GreetingText);
+		
+		homeTeam = awayTeam = sportType = date = "";
 
 		// general initialization
 		mainTable = (TableLayout)findViewById(R.id.UI_MainTableLayout);
@@ -228,7 +236,12 @@ public class ListActivity extends Activity {
 	 * @param gameIndex - Signifies which game (index) was chosen
 	 */
 	public void showDetails(int gameIndex) {
+		// homeTeam = awayTeam = sportType = date = "";
 		
+		// get the corresponding object for the desired game
+		JSONObject selectedGame = GameObjects[gameIndex];
+		
+		// then call showdialog
 	}
 
 	/**
