@@ -1,14 +1,28 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/ScrollWrap"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
 
-    <TableLayout
-        android:id="@+id/UI_MainTableLayout"
+    <TextView
+        android:id="@+id/UI_GreetingText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Medium Text"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ScrollView
+        android:id="@+id/Scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ListActivity" >
-    </TableLayout>
+        android:layout_height="match_parent" >
 
-</ScrollView>
+        <TableLayout
+            android:id="@+id/UI_MainTableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".ListActivity" >
+        </TableLayout>
+    </ScrollView>
+
+</LinearLayout>

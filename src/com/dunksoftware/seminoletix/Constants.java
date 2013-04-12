@@ -9,6 +9,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ import android.util.Log;
 public class Constants {
 	
 	public static String UsersAddress = "https://chi.erdaniels.com/users/";
+	public static String CurrentUserAddress = "https://chi.erdaniels.com/user/";
 	public static String LoginAddress = "https://chi.erdaniels.com/login/";
 	public static String LogoutAddress = "https://chi.erdaniels.com/logout/";
 	public static String GamesAddress = "https://chi.erdaniels.com/games/";
@@ -39,6 +41,7 @@ public class Constants {
 			
 			// Create the httpclient
 			HttpClient httpclient = new MyHttpClient(null);
+			((AbstractHttpClient) httpclient).setCookieStore(UserControl.mCookie);
 			
 			// set timeout to 10 seconds
 			final HttpParams httpparams = httpclient.getParams();

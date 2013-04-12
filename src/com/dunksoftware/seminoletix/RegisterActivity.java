@@ -89,13 +89,13 @@ public class RegisterActivity extends Activity {
 
 							// check card number length
 							// Commented out for testing purposes only
-							/*
+							
 							if(EditCardNumber.getText().length() != 
 									Constants.CARD_NUMBER_LENGTH) {
 								formOK = false;
 
 								errorMessage = "Incorrect length on FSU Card Number";
-							} */
+							} 
 
 							if( formOK ) {
 								// capture data from the form
