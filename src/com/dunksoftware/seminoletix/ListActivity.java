@@ -1,6 +1,8 @@
 package com.dunksoftware.seminoletix;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -17,6 +19,9 @@ import android.content.DialogInterface.OnClickListener;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Html.ImageGetter;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -26,6 +31,7 @@ import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint("DefaultLocale")
 public class ListActivity extends Activity {
@@ -37,12 +43,14 @@ public class ListActivity extends Activity {
 	private GetGames games;
 	private GetCurrentUser getCurrentUser;
 	private String response = "ERROR!";
-	
+
 	private String homeTeam,
-		awayTeam,
-		sportType,
-		date;
-	
+	awayTeam,
+	sportType,
+	date;
+
+	CharSequence finalDetailString;
+
 	private int remainingSeats = 0;
 
 	private TableLayout mainTable;
@@ -57,26 +65,26 @@ public class ListActivity extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_list);
-		
+
 		TextView welcomeMsg = (TextView)findViewById(R.id.UI_GreetingText);
-		
+
 		homeTeam = awayTeam = sportType = date = "";
 
 		// general initialization
 		mainTable = (TableLayout)findViewById(R.id.UI_MainTableLayout);
 		mDetailsListener = new AdditionDetailsListener();
-		
+
 		getCurrentUser = new GetCurrentUser();
 		getCurrentUser.execute();
-		
+
 		try {
 			JSONObject userInfoObject = new JSONObject(getCurrentUser.get());
-			
+
 			String constructHeader = "Welcome, " +
 					userInfoObject.getJSONObject("name").getString("first") 
 					+ " " + 
 					userInfoObject.getJSONObject("name").getString("last");
-			
+
 			welcomeMsg.setText(constructHeader);
 		} catch (InterruptedException e1) {
 			// TODO Auto-generated catch block
@@ -106,13 +114,6 @@ public class ListActivity extends Activity {
 			// Transfer each object in this JSONArray into its own object
 			for(int i=0;i<gamesArray.length();i++)
 				GameObjects[i] = gamesArray.getJSONObject(i);
-
-
-			/*
-			 * Value keys to get from each JSONObject:full(boolean), 
-			 * availableDate, date, seats, seatsLeft, sport,
-			 * teams:object{home, away}.
-			 * 
 
 			/*
 			 *  give every game a button for displaying additional
@@ -146,12 +147,11 @@ public class ListActivity extends Activity {
 				list.addView(info[0]);
 
 				info[1] = new TextView(this);
-				
+
 				//Format the date so that it is appropriate
-				String[] parsedDate;
 				String dateTime = GameObjects[i].getString("availableDate");
-				parsedDate = dateTime.split("T");
-				String date = parsedDate[0];
+				
+				String date = FormatDate(dateTime);
 
 				info[1].setText("\tGame Date:\t\t" + date);
 
@@ -187,6 +187,21 @@ public class ListActivity extends Activity {
 			e.printStackTrace();
 		}
 	}
+	
+	@SuppressWarnings("deprecation")
+	String FormatDate(String Date) {
+		String[] splits = Date.split("T");
+		
+		splits = splits[0].split("-");
+		
+		Date d = new Date(Integer.parseInt(splits[0]), 
+				Integer.parseInt(splits[1]), Integer.parseInt(splits[2])); 
+		DateFormat newDate = DateFormat.getDateInstance(DateFormat.LONG); 
+		newDate.format(d);
+		
+		return newDate.getDateInstance(DateFormat.LONG).format(d);
+		//return splits[0].trim();
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -199,7 +214,7 @@ public class ListActivity extends Activity {
 	@Override
 	protected Dialog onCreateDialog(int id) {
 
-		AlertDialog.Builder builder;
+		AlertDialog.Builder builder = null;
 
 		switch( id ) {
 
@@ -218,13 +233,40 @@ public class ListActivity extends Activity {
 					 */
 				}
 			});
-
-			builder.create().show();
 			break;
 		}
-		
+
 		case DETAILS_POPUP:
+			builder = new AlertDialog.
+			Builder(this);
+
+			// set up the URL for the map (map uses browser)
+			TextView mapURL = new TextView(this);
+			mapURL.setText(Html.fromHtml("<a href=http://tinyurl.com/bwvhpsv>" +
+					"<i>View a Map of the Stadium</i></a><br /><br />"));
+			mapURL.setTextSize(20);
+		
+			// make URL active
+			mapURL.setMovementMethod(LinkMovementMethod.getInstance());
+			
+			builder.setCancelable(false).setTitle(
+					Html.fromHtml("<b>Intramural Review Page</b>")).
+					setMessage(finalDetailString).setNeutralButton("Close", 
+							new OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							/* onclick closes the dialog by default, unless code is
+							 * added here
+							 */
+						}
+					}).setView(mapURL);	// add link at the bottom
 			break;
+		}
+
+		if( builder != null) {
+			// now show the dialog box once it's completed
+			builder.create().show();
 		}
 		return super.onCreateDialog(id);
 	}
@@ -236,11 +278,58 @@ public class ListActivity extends Activity {
 	 * @param gameIndex - Signifies which game (index) was chosen
 	 */
 	public void showDetails(int gameIndex) {
-		// homeTeam = awayTeam = sportType = date = "";
-		
+
 		// get the corresponding object for the desired game
 		JSONObject selectedGame = GameObjects[gameIndex];
-		
+
+		//set up the information variables
+		try {
+			homeTeam = selectedGame.getJSONObject("teams")
+					.getString("home");
+
+			awayTeam = selectedGame.getJSONObject("teams")
+					.getString("away");
+
+			sportType = selectedGame.getString("sport");
+
+			date = selectedGame.getString("date");
+			
+			// format the date
+			date = FormatDate(date);
+			
+
+			remainingSeats = selectedGame.getInt("seatsLeft");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		// format the resulting info string
+		//finalDetailString = Html.fromHtml(source, imageGetter, tagHandler);
+		finalDetailString = Html.fromHtml(
+				"<img src=img_" + homeTeam + ">\t\t" + 
+						"<b>V.S</b>\t\t" +
+						"<img src=img_" + awayTeam + "> " +
+						"<br />" + "<br />" +
+						"<b>Sport Type: </b>" + sportType +
+						"<br />" + "<br />" +
+						"<b>Seats Remaining: </b>" + remainingSeats +
+						"<br />" + "<br />" +
+						"<b>Event Date: </b>" + date
+
+						,new ImageGetter() {
+					@Override public Drawable getDrawable(String source) {
+						Drawable drawFromPath;
+						int path =
+								ListActivity.this.getResources().getIdentifier(source, "drawable",
+										"com.dunksoftware.seminoletix");
+						drawFromPath = (Drawable) ListActivity.this.getResources().getDrawable(path);
+						drawFromPath.setBounds(0, 0, drawFromPath.getIntrinsicWidth(),
+								drawFromPath.getIntrinsicHeight());
+						return drawFromPath;
+					}
+				}, null);// link to map of stadium 
+		showDialog(DETAILS_POPUP);
+
 		// then call showdialog
 	}
 
@@ -257,13 +346,13 @@ public class ListActivity extends Activity {
 		public void onClick(View v) {
 
 			Button btn_viewGame = (Button)v;
-			
+
 			showDetails( btn_viewGame.getId());
 		}
 	}
-	
+
 	class GetCurrentUser extends AsyncTask<Void, Void, String> {
-		
+
 		@Override
 		protected String doInBackground(Void... params) {
 
