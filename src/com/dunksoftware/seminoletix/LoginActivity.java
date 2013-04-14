@@ -80,51 +80,48 @@ public class LoginActivity extends Activity {
 
 							ShowMessage("You will be remembered.", Toast.LENGTH_SHORT);
 						}
+
+						if( !Online() ) 
+							showDialog(NO_CONNECTION_DIALOG);
+	
 						else {
-
-							if( !Online() ) 
-								showDialog(NO_CONNECTION_DIALOG);
-
-							else {
-								Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
-								Login.execute();
-
-								try {
-									JSONObject JSONresponse = new JSONObject(Login.get());
-
-									// Send the user back to the login page.
-									if( JSONresponse.getString("success").equals("true")) {
-
-										startActivity(new Intent(getApplicationContext(), 
-												ListActivity.class));
-
-										ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
-
-										/* Close the current activity, ensuring that this
-										 *  SAME page cannot be reached via Back button, 
-										 *  once a user has successfully registered. 
-										 *  (Basically takes this page out of the "page history" )
-										 */
-
-										//finish();
-									}
-									/* if server returns false on registration, clear the CardNumber
-									 * and PIN field
+							Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
+							Login.execute();
+	
+							try {
+								JSONObject JSONresponse = new JSONObject(Login.get());
+	
+								// Send the user back to the login page.
+								if( JSONresponse.getString("success").equals("true")) {
+	
+									startActivity(new Intent(getApplicationContext(), 
+											ListActivity.class));
+									ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
+	
+									/* Close the current activity, ensuring that this
+									 *  SAME page cannot be reached via Back button, 
+									 *  once a user has successfully registered. 
+									 *  (Basically takes this page out of the "page history" )
 									 */
-									else {
-										// Print out a success message to the user's UI
-										ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
-
-										editUsername.getText().clear();
-										editPassword.getText().clear();
-									}
-								} catch (InterruptedException e) {
-									e.printStackTrace();
-								} catch (ExecutionException e) {
-									e.printStackTrace();
-								} catch (JSONException e) {
-									e.printStackTrace();
+	
+									//finish();
 								}
+								/* if server returns false on registration, clear the CardNumber
+								 * and PIN field
+								 */
+								else {
+									// Print out a success message to the user's UI
+									ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
+	
+									editUsername.getText().clear();
+									editPassword.getText().clear();
+								}
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							} catch (ExecutionException e) {
+								e.printStackTrace();
+							} catch (JSONException e) {
+								e.printStackTrace();
 							}
 						}
 					}

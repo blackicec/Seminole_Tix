@@ -156,13 +156,13 @@ public class ListActivity extends Activity {
 				list.addView(info[1]);
 
 				info[2] = new TextView(this);
-				info[2].setText("\tHome:\t\t" + GameObjects[i].getJSONObject("teams")
+				info[2].setText("\tHome Team:\t\t" + GameObjects[i].getJSONObject("teams")
 						.getString("home").toUpperCase());
 
 				list.addView(info[2]);
 
 				info[3] = new TextView(this);
-				info[3].setText("\tOpponent:\t\t" + GameObjects[i].getJSONObject("teams")
+				info[3].setText("\tAgainst:\t\t" + GameObjects[i].getJSONObject("teams")
 						.getString("away").toUpperCase());
 
 				list.addView(info[3]);
@@ -308,7 +308,7 @@ public class ListActivity extends Activity {
 						"<b>V.S</b>\t\t" +
 						"<img src=img_" + awayTeam + "> " +
 						"<br />" + "<br />" +
-						"<b>Sport Type: </b>" + sportType +
+						"<b>Sport: </b>" + sportType +
 						"<br />" + "<br />" +
 						"<b>Seats Remaining: </b>" + remainingSeats +
 						"<br />" + "<br />" +
