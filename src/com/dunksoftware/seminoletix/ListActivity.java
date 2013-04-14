@@ -27,11 +27,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-import android.widget.Toast;
 
 @SuppressLint("DefaultLocale")
 public class ListActivity extends Activity {
@@ -194,7 +192,7 @@ public class ListActivity extends Activity {
 		
 		splits = splits[0].split("-");
 		
-		Date d = new Date(Integer.parseInt(splits[0]), 
+		Date d = new Date(Integer.parseInt(splits[0]) - 1900, 
 				Integer.parseInt(splits[1]), Integer.parseInt(splits[2])); 
 		DateFormat newDate = DateFormat.getDateInstance(DateFormat.LONG); 
 		newDate.format(d);
