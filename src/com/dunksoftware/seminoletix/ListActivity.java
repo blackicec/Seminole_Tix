@@ -147,7 +147,7 @@ public class ListActivity extends Activity {
 				info[1] = new TextView(this);
 
 				//Format the date so that it is appropriate
-				String dateTime = GameObjects[i].getString("availableDate");
+				String dateTime = GameObjects[i].getString("date");
 				
 				String date = FormatDate(dateTime);
 
