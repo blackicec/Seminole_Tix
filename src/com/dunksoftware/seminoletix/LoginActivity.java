@@ -2,14 +2,12 @@ package com.dunksoftware.seminoletix;
 
 import java.util.concurrent.ExecutionException;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -17,7 +15,6 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -45,142 +42,138 @@ public class LoginActivity extends Activity {
 	private UserControl.Logout Logout;
 
 	public static final int NO_CONNECTION_DIALOG = 80;
+	public static boolean remembered = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
-		// Shared preferences still under construction
-		mSettings = getSharedPreferences(PREFS_NAME, 0);
-		mSettings.getString(USER_NAME, ERROR_STRING);
+		if( remembered ) {
+			// go to next page
+			startActivity(new Intent())
+		}
+		else {
 
-		mUserControl = new UserControl();
+			mUserControl = new UserControl();
 
-		// link widgets to variables 
-		editUsername = (EditText)findViewById(R.id.UI_EditFSUID);
-		editPassword = (EditText)findViewById(R.id.UI_EditFSUPass);
+			// link widgets to variables 
+			editUsername = (EditText)findViewById(R.id.UI_EditFSUID);
+			editPassword = (EditText)findViewById(R.id.UI_EditFSUPass);
 
-		mRegisterBtn = (Button)findViewById(R.id.UI_registerBtn);
-		mLoginBtn = (Button)findViewById(R.id.UI_signinBtn);
+			mRegisterBtn = (Button)findViewById(R.id.UI_registerBtn);
+			mLoginBtn = (Button)findViewById(R.id.UI_signinBtn);
 
-		// set anonymous onclick listeners for registration and login buttons
-		mLoginBtn.setOnClickListener(
-				new View.OnClickListener() {
+			// set anonymous on_click listeners for registration and login buttons
+			mLoginBtn.setOnClickListener(
+					new View.OnClickListener() {
 
-					// email, cardNum, password, remember_me
-					@Override
-					public void onClick(View v) {
+						// email, cardNum, password, remember_me
+						@SuppressWarnings("deprecation")
+						@Override
+						public void onClick(View v) {
 
-						mUserResponse = editUsername.getText().toString();
-						mPassResponse = editPassword.getText().toString();
+							mUserResponse = editUsername.getText().toString();
+							mPassResponse = editPassword.getText().toString();
 
-						if( ((CheckBox)findViewById(R.id.UI_CheckRememberMe)).isChecked()) {
-							Login = mUserControl.new Login(mUserResponse, mPassResponse, true);
+							if( ((CheckBox)findViewById(R.id.UI_CheckRememberMe)).isChecked()) {
+								Login = mUserControl.new Login(mUserResponse, mPassResponse, true);
 
-							ShowMessage("You will be remembered.", Toast.LENGTH_SHORT);
-						}
+								ShowMessage("You will be remembered.", Toast.LENGTH_SHORT);
+								
+								remembered = true;
+							}
 
-						if( !Online() ) 
-							showDialog(NO_CONNECTION_DIALOG);
-	
-						else {
-							Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
-							Login.execute();
-	
-							try {
-								JSONObject JSONresponse = new JSONObject(Login.get());
-	
-								// Send the user back to the login page.
-								if( JSONresponse.getString("success").equals("true")) {
-	
-									startActivity(new Intent(getApplicationContext(), 
-											ListActivity.class));
-									ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
-	
-									/* Close the current activity, ensuring that this
-									 *  SAME page cannot be reached via Back button, 
-									 *  once a user has successfully registered. 
-									 *  (Basically takes this page out of the "page history" )
+							if( !Online() ) 
+								showDialog(NO_CONNECTION_DIALOG);
+
+							else {
+								Login = mUserControl.new Login(mUserResponse, mPassResponse, false);
+								Login.execute();
+
+								try {
+									JSONObject JSONresponse = new JSONObject(Login.get());
+
+									// Send the user back to the login page.
+									if( JSONresponse.getString("success").equals("true")) {
+
+										startActivity(new Intent(getApplicationContext(), 
+												ListActivity.class));
+										ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
+
+										/* Close the current activity, ensuring that this
+										 *  SAME page cannot be reached via Back button, 
+										 *  once a user has successfully registered. 
+										 *  (Basically takes this page out of the "page history" )
+										 */
+
+										//finish();
+									}
+									/* if server returns false on registration, clear the CardNumber
+									 * and PIN field
 									 */
-	
-									//finish();
+									else {
+										// Print out a success message to the user's UI
+										ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
+
+										editUsername.getText().clear();
+										editPassword.getText().clear();
+									}
+								} catch (InterruptedException e) {
+									e.printStackTrace();
+								} catch (ExecutionException e) {
+									e.printStackTrace();
+								} catch (JSONException e) {
+									e.printStackTrace();
 								}
-								/* if server returns false on registration, clear the CardNumber
-								 * and PIN field
-								 */
-								else {
-									// Print out a success message to the user's UI
-									ShowMessage( JSONresponse.getString("message"), Toast.LENGTH_LONG);
-	
-									editUsername.getText().clear();
-									editPassword.getText().clear();
-								}
-							} catch (InterruptedException e) {
-								e.printStackTrace();
-							} catch (ExecutionException e) {
-								e.printStackTrace();
-							} catch (JSONException e) {
-								e.printStackTrace();
 							}
 						}
+					});
+
+			// Event handler for the Register button
+			mRegisterBtn.setOnClickListener(new View.OnClickListener() {
+
+				@SuppressWarnings("deprecation")
+				@Override
+				public void onClick(View arg0) {
+
+					if( !Online() ) 
+						showDialog(NO_CONNECTION_DIALOG);
+
+					else {
+						Intent nextActivityIntent = 
+								new Intent(getApplicationContext(), RegisterActivity.class);
+
+						startActivity(nextActivityIntent);
 					}
-				});
-
-		// Event handler for the Register button
-		mRegisterBtn.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
-
-				if( !Online() ) 
-					showDialog(NO_CONNECTION_DIALOG);
-
-				else {
-					Intent nextActivityIntent = 
-							new Intent(getApplicationContext(), RegisterActivity.class);
-
-					startActivity(nextActivityIntent);
 				}
-			}
-		});
+			});
 
-		// logout button test
-		((Button)(findViewById(R.id.bUI_logoutBtn)))
-		.setOnClickListener(new View.OnClickListener() {
+			// logout button test
+			((Button)(findViewById(R.id.bUI_logoutBtn)))
+			.setOnClickListener(new View.OnClickListener() {
 
-			@Override
-			public void onClick(View v) {
-				Logout = mUserControl.new Logout();
+				@Override
+				public void onClick(View v) {
+					Logout = mUserControl.new Logout();
 
-				Logout.execute();
+					Logout.execute();
 
-				try {
-					JSONObject json = new JSONObject(Logout.get());
-					ShowMessage(json.toString(), Toast.LENGTH_LONG);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					try {
+						JSONObject json = new JSONObject(Logout.get());
+						ShowMessage(json.toString(), Toast.LENGTH_LONG);
+					} catch (JSONException e) {
+						e.printStackTrace();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					} catch (ExecutionException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-		});
+			});
+
+		}
 	} // End of onCreate function
-
-	@Override
-	protected void onStop() {
-		super.onStop();
-
-		SharedPreferences.Editor editor = mSettings.edit();
-
-		editor.putString(USER_NAME, mUserResponse);
-		editor.commit();
-	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

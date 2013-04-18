@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 @SuppressLint("DefaultLocale")
 public class ListActivity extends Activity {
@@ -65,6 +66,46 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.activity_list);
 
 		TextView welcomeMsg = (TextView)findViewById(R.id.UI_GreetingText);
+		
+		// set up logout button
+		((Button)findViewById(R.id.UI_LogoutBtn)).setOnClickListener(
+				new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				UserControl UC = new UserControl();
+				UserControl.Logout logout = UC.new Logout();
+				
+				// begin the logout process
+				logout.execute();
+				
+				// wait for the server's results
+				try {
+					JSONObject json = new JSONObject(logout.get());
+					
+					String message = json.getString("success");
+					
+					// check to see if user has successfully logged out
+					if(message.equals("true")) {
+						Toast.makeText(getApplicationContext(), 
+								"You have been logged out.", Toast.LENGTH_LONG)
+								.show();
+					}
+					else {
+						Toast.makeText(getApplicationContext(), 
+								"You are not logged in.", Toast.LENGTH_LONG)
+								.show();
+					}
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (ExecutionException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 
 		homeTeam = awayTeam = sportType = date = "";
 
