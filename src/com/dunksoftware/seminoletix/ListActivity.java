@@ -35,7 +35,7 @@ import android.widget.Toast;
 
 @SuppressLint("DefaultLocale")
 public class ListActivity extends Activity {
-	
+
 	public static String userName = "";
 
 	private JSONObject[] GameObjects = null;
@@ -52,7 +52,7 @@ public class ListActivity extends Activity {
 	 *  location will be recorded into this variable. ( -1 is default value ) 
 	 */
 	private int inquiredGame = -1;
-	
+
 	private String homeTeam,
 	awayTeam,
 	sportType,
@@ -106,7 +106,13 @@ public class ListActivity extends Activity {
 								Toast.makeText(getApplicationContext(), 
 										"You are not logged in.", Toast.LENGTH_LONG)
 										.show();
+								finish();
 							}
+
+							finish();
+
+							startActivity(new Intent(getApplicationContext(),
+									LoginActivity.class));
 
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -136,7 +142,7 @@ public class ListActivity extends Activity {
 					userInfoObject.getJSONObject("name").getString("last");
 
 			String constructHeader = "Welcome, " + userName;
-					
+
 			welcomeMsg.setText(constructHeader);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -312,7 +318,7 @@ public class ListActivity extends Activity {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-							
+
 							/* 
 							 * if all seats are gone, show error. Else, reserve
 							 * the selected ticket
@@ -324,38 +330,27 @@ public class ListActivity extends Activity {
 								showDialog(NO_MORE_SEATS_POPUP);
 							else {
 								ReserveTicket reserve = new ReserveTicket();
-								
+
 								reserve.execute(selectedGameID);
-								
-								try {
-									Toast.makeText(getApplicationContext(),
-											reserve.get(), Toast.LENGTH_LONG).show();
-									
-									// navigate to the list of currently reserved tickets
-									startActivity(new Intent(getApplication(),
-											ShowGamesList.class));
-									
-								} catch (InterruptedException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								} catch (ExecutionException e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
-								}
+
+								// navigate to the list of currently reserved tickets
+								startActivity(new Intent(getApplication(),
+										ShowGamesList.class));
+
 							}
 						}
 					}).setView(mapURL);	// add link at the bottom
 			break;
-			
+
 		case NO_MORE_SEATS_POPUP:
 			builder = new AlertDialog.Builder(this);
-			
+
 			builder.setCancelable(false)
-				.setTitle("An Error Occurred During Reservation")
-				.setNeutralButton("Return to List", null)
-				.setMessage("It appears that no more seats are" +
-						" available at the moment.\n\nPlease choose" +
-						" another game.");
+			.setTitle("An Error Occurred During Reservation")
+			.setNeutralButton("Return to List", null)
+			.setMessage("It appears that no more seats are" +
+					" available at the moment.\n\nPlease choose" +
+					" another game.");
 			break;
 		}
 
@@ -381,7 +376,7 @@ public class ListActivity extends Activity {
 		//set up the information variables
 		try {
 			selectedGameID = selectedGame.getString("_id");
-			
+
 			homeTeam = selectedGame.getJSONObject("teams")
 					.getString("home");
 
@@ -396,7 +391,7 @@ public class ListActivity extends Activity {
 			date = FormatDate(date);
 
 			remainingSeats = selectedGame.getInt("seatsLeft");
-			
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

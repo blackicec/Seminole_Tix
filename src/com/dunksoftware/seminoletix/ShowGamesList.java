@@ -13,11 +13,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.dunksoftware.seminoletix.ListActivity.AdditionDetailsListener;
+import com.dunksoftware.seminoletix.UserControl.Logout;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
@@ -39,6 +42,51 @@ public class ShowGamesList extends Activity {
 
 		TextView welcomeMsg = (TextView)findViewById(R.id.UI_GreetingText);
 		mainTable = (TableLayout)findViewById(R.id.UI_MainTableLayout);
+
+		// set up logout button
+		((Button)findViewById(R.id.UI_LogoutBtn)).setOnClickListener(
+				new View.OnClickListener() {
+
+					@Override
+					public void onClick(View v) {
+						UserControl UC = new UserControl();
+						UserControl.Logout logout = UC.new Logout();
+
+						// begin the logout process
+						logout.execute();
+
+						// wait for the server's results
+						try {
+							JSONObject json = new JSONObject(logout.get());
+
+							String message = json.getString("success");
+
+							// check to see if user has successfully logged out
+							if(message.equals("true")) {
+								Toast.makeText(getApplicationContext(), 
+										"You have been logged out.", Toast.LENGTH_LONG)
+										.show();
+							}
+							else {
+								Toast.makeText(getApplicationContext(), 
+										"You are not logged in.", Toast.LENGTH_LONG)
+										.show();
+							}
+							
+							finish();
+							
+							startActivity(new Intent(getApplicationContext(),
+									LoginActivity.class));
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				});
 
 		welcomeMsg.setText(ListActivity.userName);
 
