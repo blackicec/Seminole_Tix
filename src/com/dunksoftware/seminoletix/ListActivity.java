@@ -16,6 +16,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,6 +35,8 @@ import android.widget.Toast;
 
 @SuppressLint("DefaultLocale")
 public class ListActivity extends Activity {
+	
+	public static String userName = "";
 
 	private JSONObject[] GameObjects = null;
 	private JSONArray gamesArray = null;
@@ -49,7 +52,7 @@ public class ListActivity extends Activity {
 	 *  location will be recorded into this variable. ( -1 is default value ) 
 	 */
 	private int inquiredGame = -1;
-
+	
 	private String homeTeam,
 	awayTeam,
 	sportType,
@@ -121,17 +124,19 @@ public class ListActivity extends Activity {
 		mainTable = (TableLayout)findViewById(R.id.UI_MainTableLayout);
 		mDetailsListener = new AdditionDetailsListener();
 
+		// get the name of the user that is currently logged in
 		getCurrentUser = new GetCurrentUser();
 		getCurrentUser.execute();
 
 		try {
 			JSONObject userInfoObject = new JSONObject(getCurrentUser.get());
 
-			String constructHeader = "Welcome, " +
-					userInfoObject.getJSONObject("name").getString("first") 
+			userName = userInfoObject.getJSONObject("name").getString("first") 
 					+ " " + 
 					userInfoObject.getJSONObject("name").getString("last");
 
+			String constructHeader = "Welcome, " + userName;
+					
 			welcomeMsg.setText(constructHeader);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
@@ -148,7 +153,7 @@ public class ListActivity extends Activity {
 			response = games.get();
 
 			// Show the pop-up box (for display testing)
-			showDialog(MESSAGE);
+			//showDialog(MESSAGE);
 
 			gamesArray = new JSONArray(response);
 
@@ -326,6 +331,10 @@ public class ListActivity extends Activity {
 									Toast.makeText(getApplicationContext(),
 											reserve.get(), Toast.LENGTH_LONG).show();
 									
+									// navigate to the list of currently reserved tickets
+									startActivity(new Intent(getApplication(),
+											ShowGamesList.class));
+									
 								} catch (InterruptedException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -450,10 +459,11 @@ public class ListActivity extends Activity {
 		protected String doInBackground(Void... params) {
 
 			// Create a new HttpClient and Post Header
-			MyHttpClient client=new MyHttpClient(null);
+			MyHttpClient client = new MyHttpClient(null);
 
 			//sets cookie
 			client.setCookieStore(UserControl.mCookie);
+
 			// Prepare a request object
 			HttpGet httpget = new HttpGet(Constants.CurrentUserAddress); 
 
