@@ -116,6 +116,10 @@ public class LoginActivity extends Activity {
 									// If the user is already logged in, just go back to the list.
 									else if( JSONresponse.getString("success").equals("false") && 
 												JSONresponse.getString("message").equals("Already logged in.")) {
+										InputMethodManager imm = (InputMethodManager)getSystemService(
+												Context.INPUT_METHOD_SERVICE);
+										imm.hideSoftInputFromWindow(editPassword.getWindowToken(), 0);
+										
 										startActivity(new Intent(getApplicationContext(), ListActivity.class));
 									}
 									/* if server returns false on registration, clear the CardNumber
