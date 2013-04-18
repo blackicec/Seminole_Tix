@@ -53,7 +53,8 @@ public class ListActivity extends Activity {
 	private String homeTeam,
 	awayTeam,
 	sportType,
-	date;
+	date,
+	selectedGameID;
 
 	CharSequence finalDetailString;
 
@@ -62,10 +63,10 @@ public class ListActivity extends Activity {
 	private TableLayout mainTable;
 
 	private final int MESSAGE = 200, 
-			DETAILS_POPUP = 250;
+			DETAILS_POPUP = 250,
+			NO_MORE_SEATS_POPUP = 300;
 
 	@SuppressLint("DefaultLocale")
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 
@@ -144,10 +145,10 @@ public class ListActivity extends Activity {
 
 		try {
 			games.execute();
-			response=games.get();
+			response = games.get();
 
 			// Show the pop-up box (for display testing)
-			//showDialog(MESSAGE);
+			showDialog(MESSAGE);
 
 			gamesArray = new JSONArray(response);
 
@@ -212,7 +213,7 @@ public class ListActivity extends Activity {
 
 				list.addView(info[3]);
 
-				// add the button to display details for each game
+				// add the button to the display details for each game
 				// might have to add tag to button
 				list.addView(detailsButtons[i]);
 
@@ -243,7 +244,6 @@ public class ListActivity extends Activity {
 		newDate.format(d);
 
 		return DateFormat.getDateInstance(DateFormat.LONG).format(d);
-		//return splits[0].trim();
 	}
 
 	@Override
@@ -280,8 +280,7 @@ public class ListActivity extends Activity {
 		}
 
 		case DETAILS_POPUP:
-			builder = new AlertDialog.
-			Builder(this);
+			builder = new AlertDialog.Builder(this);
 
 			// set up the URL for the map (map uses browser)
 			TextView mapURL = new TextView(this);
@@ -308,9 +307,46 @@ public class ListActivity extends Activity {
 
 						@Override
 						public void onClick(DialogInterface dialog, int which) {
-
+							
+							/* 
+							 * if all seats are gone, show error. Else, reserve
+							 * the selected ticket
+							 * 
+							 * (remaining seats was set in the "ShowDetails"
+							 * function)
+							 */
+							if( remainingSeats == 0)
+								showDialog(NO_MORE_SEATS_POPUP);
+							else {
+								ReserveTicket reserve = new ReserveTicket();
+								
+								reserve.execute(selectedGameID);
+								
+								try {
+									Toast.makeText(getApplicationContext(),
+											reserve.get(), Toast.LENGTH_LONG).show();
+									
+								} catch (InterruptedException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								} catch (ExecutionException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
 						}
 					}).setView(mapURL);	// add link at the bottom
+			break;
+			
+		case NO_MORE_SEATS_POPUP:
+			builder = new AlertDialog.Builder(this);
+			
+			builder.setCancelable(false)
+				.setTitle("An Error Occurred During Reservation")
+				.setNeutralButton("Return to List", null)
+				.setMessage("It appears that no more seats are" +
+						" available at the moment.\n\nPlease choose" +
+						" another game.");
 			break;
 		}
 
@@ -335,11 +371,13 @@ public class ListActivity extends Activity {
 
 		//set up the information variables
 		try {
+			selectedGameID = selectedGame.getString("_id");
+			
 			homeTeam = selectedGame.getJSONObject("teams")
 					.getString("home");
 
 			awayTeam = selectedGame.getJSONObject("teams")
-					.getString("away");
+					.getString("away");			
 
 			sportType = selectedGame.getString("sport");
 
@@ -348,8 +386,8 @@ public class ListActivity extends Activity {
 			// format the date
 			date = FormatDate(date);
 
-
 			remainingSeats = selectedGame.getInt("seatsLeft");
+			
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

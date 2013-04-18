@@ -9,12 +9,12 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -35,11 +35,8 @@ public class LoginActivity extends Activity {
 	private String mUserResponse,
 	mPassResponse;
 
-	private SharedPreferences mSettings;
-
 	private UserControl mUserControl;
 	private UserControl.Login Login;
-	private UserControl.Logout Logout;
 
 	public static final int NO_CONNECTION_DIALOG = 80;
 	public static boolean remembered = false;
@@ -81,7 +78,7 @@ public class LoginActivity extends Activity {
 								Login = mUserControl.new Login(mUserResponse, mPassResponse, true);
 
 								ShowMessage("You will be remembered.", Toast.LENGTH_SHORT);
-								
+
 								remembered = true;
 							}
 
@@ -98,9 +95,15 @@ public class LoginActivity extends Activity {
 									// Send the user back to the login page.
 									if( JSONresponse.getString("success").equals("true")) {
 
+										// force the virtual keyboard off the screen
+										InputMethodManager imm = (InputMethodManager)getSystemService(
+												Context.INPUT_METHOD_SERVICE);
+										imm.hideSoftInputFromWindow(editPassword.getWindowToken(), 0);
+
 										startActivity(new Intent(getApplicationContext(), 
 												ListActivity.class));
-										ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
+
+										//ShowMessage(JSONresponse.toString(), Toast.LENGTH_LONG);
 
 										/* Close the current activity, ensuring that this
 										 *  SAME page cannot be reached via Back button, 

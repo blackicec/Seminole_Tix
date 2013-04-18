@@ -27,6 +27,7 @@ public class Constants {
 	public static String LoginAddress = "https://chi.erdaniels.com/login/";
 	public static String LogoutAddress = "https://chi.erdaniels.com/logout/";
 	public static String GamesAddress = "https://chi.erdaniels.com/games/";
+	public static String ReservedGamesAddress = "https://chi.erdaniels.com/game/";
 	
 	public static String Success_msg = "Successful Registration";
 	

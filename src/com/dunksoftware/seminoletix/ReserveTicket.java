@@ -6,6 +6,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.util.EntityUtils;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -24,14 +25,20 @@ public class ReserveTicket extends AsyncTask<String, Void, String> {
 	
 		HttpClient httpclient = new MyHttpClient(null);
 		
+		// set the cookie
+		((AbstractHttpClient) httpclient).setCookieStore(UserControl.mCookie);
+		
 		Log.w("ReserveTicket.execute()", params[0]);
 		
 		try {
-			HttpPost httppost = new HttpPost(Constants.GamesAddress + params[0]);		
+			HttpPost httppost = new HttpPost(Constants.ReservedGamesAddress
+					+ params[0]);
+			
 			HttpResponse response = httpclient.execute(httppost);
 			
 			String responseMessage = EntityUtils.toString(response.getEntity());
 			Log.w("ReserveTicket.execute()", responseMessage);
+			
 			return responseMessage;
 		} catch (UnsupportedEncodingException e) {
 			Log.w("ReserveTicket.execute() error", e.getMessage());
