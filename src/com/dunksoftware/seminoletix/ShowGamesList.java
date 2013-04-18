@@ -106,7 +106,7 @@ public class ShowGamesList extends Activity {
 
 			//Toast.makeText(this, games, Toast.LENGTH_LONG).show();
 
-			//Toast.makeText(this, serverResponse, Toast.LENGTH_LONG).show();
+			Toast.makeText(this, serverResponse, Toast.LENGTH_LONG).show();
 
 			for(int i = 0; i < mGameIdTags.length(); i++) {
 				for(int j = 0; j < gamesArray.length(); ++j)
@@ -118,7 +118,7 @@ public class ShowGamesList extends Activity {
 						TableRow gameTableRow = new TableRow(this);
 						LinearLayout list = new LinearLayout(this);
 
-						TextView[] info = new TextView[4];
+						TextView[] info = new TextView[5];
 
 						// set the list to a top down look
 						list.setOrientation(LinearLayout.VERTICAL);
@@ -151,6 +151,13 @@ public class ShowGamesList extends Activity {
 								.getString("away").toUpperCase());
 
 						list.addView(info[3]);
+						
+						info[4] = new TextView(this);
+						info[4].setText("\t\tTicket Confirmation #:\t\t" + 
+								mGameIdTags.getJSONObject(i)
+									.getString("confirmationId"));
+
+						list.addView(info[4]);
 
 						list.setPadding(0, 5, 0, 20);
 						gameTableRow.addView(list);

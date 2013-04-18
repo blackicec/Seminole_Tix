@@ -7,23 +7,34 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="70dp" >
 
         <TextView
             android:id="@+id/UI_GreetingText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
             android:text="Medium Text"
             android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Button
+            android:id="@+id/ViewReservedBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:minWidth="80dp"
+            android:text="Reserved" />
 
         <Button
             android:id="@+id/UI_LogoutBtn"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@+id/UI_GreetingText"
             android:text="Logout" />
 
     </RelativeLayout>
@@ -40,17 +51,5 @@
             tools:context=".ListActivity" >
         </TableLayout>
     </ScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
-        <Button
-            android:id="@+id/button1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="View Reserved Games" />
-
-    </LinearLayout>
 
 </LinearLayout>

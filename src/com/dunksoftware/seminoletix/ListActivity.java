@@ -77,6 +77,18 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.activity_list);
 
 		TextView welcomeMsg = (TextView)findViewById(R.id.UI_GreetingText);
+		
+		((Button)findViewById(R.id.ViewReservedBtn)).setOnClickListener(
+				new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				finish();
+				
+				startActivity(new Intent(getApplicationContext(),
+						ShowGamesList.class));
+			}
+		});
 
 		// set up logout button
 		((Button)findViewById(R.id.UI_LogoutBtn)).setOnClickListener(
