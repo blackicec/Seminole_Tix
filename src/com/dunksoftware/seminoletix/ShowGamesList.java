@@ -106,7 +106,7 @@ public class ShowGamesList extends Activity {
 
 			//Toast.makeText(this, games, Toast.LENGTH_LONG).show();
 
-			Toast.makeText(this, serverResponse, Toast.LENGTH_LONG).show();
+			//Toast.makeText(this, serverResponse, Toast.LENGTH_LONG).show();
 
 			for(int i = 0; i < mGameIdTags.length(); i++) {
 				for(int j = 0; j < gamesArray.length(); ++j)
