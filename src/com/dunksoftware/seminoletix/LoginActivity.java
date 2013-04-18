@@ -47,13 +47,14 @@ public class LoginActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
 
 		if( remembered ) {
 			// go to next page
-			startActivity(new Intent())
+			startActivity(new Intent(this, ListActivity.class));
 		}
 		else {
+			// display the login screen and proceed
+			setContentView(R.layout.activity_login);
 
 			mUserControl = new UserControl();
 
@@ -148,30 +149,6 @@ public class LoginActivity extends Activity {
 					}
 				}
 			});
-
-			// logout button test
-			((Button)(findViewById(R.id.bUI_logoutBtn)))
-			.setOnClickListener(new View.OnClickListener() {
-
-				@Override
-				public void onClick(View v) {
-					Logout = mUserControl.new Logout();
-
-					Logout.execute();
-
-					try {
-						JSONObject json = new JSONObject(Logout.get());
-						ShowMessage(json.toString(), Toast.LENGTH_LONG);
-					} catch (JSONException e) {
-						e.printStackTrace();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					} catch (ExecutionException e) {
-						e.printStackTrace();
-					}
-				}
-			});
-
 		}
 	} // End of onCreate function
 

@@ -143,7 +143,7 @@ public class ListActivity extends Activity {
 			response=games.get();
 
 			// Show the pop-up box (for display testing)
-			showDialog(MESSAGE);
+			//showDialog(MESSAGE);
 
 			gamesArray = new JSONArray(response);
 
