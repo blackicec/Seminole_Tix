@@ -302,7 +302,7 @@ public class ListActivity extends Activity {
 			mapURL.setMovementMethod(LinkMovementMethod.getInstance());
 
 			builder.setCancelable(false).setTitle(
-					Html.fromHtml("<b>Intramural Review Page</b>")).
+					Html.fromHtml("<b>Ticket Details</b>")).
 					setMessage(finalDetailString).setNeutralButton("Close", 
 							new OnClickListener() {
 
