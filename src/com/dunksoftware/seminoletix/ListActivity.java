@@ -43,6 +43,13 @@ public class ListActivity extends Activity {
 	private GetCurrentUser getCurrentUser;
 	private String response = "ERROR!";
 
+	/*
+	 *  A variable that lets functions know which game has been inquired
+	 *  about. When a "More details" button is clicked, that JSONArray element
+	 *  location will be recorded into this variable. ( -1 is default value ) 
+	 */
+	private int inquiredGame = -1;
+
 	private String homeTeam,
 	awayTeam,
 	sportType,
@@ -66,46 +73,46 @@ public class ListActivity extends Activity {
 		setContentView(R.layout.activity_list);
 
 		TextView welcomeMsg = (TextView)findViewById(R.id.UI_GreetingText);
-		
+
 		// set up logout button
 		((Button)findViewById(R.id.UI_LogoutBtn)).setOnClickListener(
 				new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				UserControl UC = new UserControl();
-				UserControl.Logout logout = UC.new Logout();
-				
-				// begin the logout process
-				logout.execute();
-				
-				// wait for the server's results
-				try {
-					JSONObject json = new JSONObject(logout.get());
-					
-					String message = json.getString("success");
-					
-					// check to see if user has successfully logged out
-					if(message.equals("true")) {
-						Toast.makeText(getApplicationContext(), 
-								"You have been logged out.", Toast.LENGTH_LONG)
-								.show();
-					}
-					else {
-						Toast.makeText(getApplicationContext(), 
-								"You are not logged in.", Toast.LENGTH_LONG)
-								.show();
-					}
 
-				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-				}
-			}
-		});
+					@Override
+					public void onClick(View v) {
+						UserControl UC = new UserControl();
+						UserControl.Logout logout = UC.new Logout();
+
+						// begin the logout process
+						logout.execute();
+
+						// wait for the server's results
+						try {
+							JSONObject json = new JSONObject(logout.get());
+
+							String message = json.getString("success");
+
+							// check to see if user has successfully logged out
+							if(message.equals("true")) {
+								Toast.makeText(getApplicationContext(), 
+										"You have been logged out.", Toast.LENGTH_LONG)
+										.show();
+							}
+							else {
+								Toast.makeText(getApplicationContext(), 
+										"You are not logged in.", Toast.LENGTH_LONG)
+										.show();
+							}
+
+						} catch (JSONException e) {
+							e.printStackTrace();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						} catch (ExecutionException e) {
+							e.printStackTrace();
+						}
+					}
+				});
 
 		homeTeam = awayTeam = sportType = date = "";
 
@@ -126,13 +133,10 @@ public class ListActivity extends Activity {
 
 			welcomeMsg.setText(constructHeader);
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (ExecutionException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -189,7 +193,7 @@ public class ListActivity extends Activity {
 
 				//Format the date so that it is appropriate
 				String dateTime = GameObjects[i].getString("date");
-				
+
 				String date = FormatDate(dateTime);
 
 				info[1].setText("\tGame Date:\t\t" + date);
@@ -226,19 +230,19 @@ public class ListActivity extends Activity {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	String FormatDate(String Date) {
 		String[] splits = Date.split("T");
-		
+
 		splits = splits[0].split("-");
-		
+
 		Date d = new Date(Integer.parseInt(splits[0]) - 1900, 
 				Integer.parseInt(splits[1]), Integer.parseInt(splits[2])); 
 		DateFormat newDate = DateFormat.getDateInstance(DateFormat.LONG); 
 		newDate.format(d);
-		
-		return newDate.getDateInstance(DateFormat.LONG).format(d);
+
+		return DateFormat.getDateInstance(DateFormat.LONG).format(d);
 		//return splits[0].trim();
 	}
 
@@ -284,10 +288,10 @@ public class ListActivity extends Activity {
 			mapURL.setText(Html.fromHtml("<a href=http://tinyurl.com/bwvhpsv>" +
 					"<i>View a Map of the Stadium</i></a><br /><br />"));
 			mapURL.setTextSize(20);
-		
+
 			// make URL active
 			mapURL.setMovementMethod(LinkMovementMethod.getInstance());
-			
+
 			builder.setCancelable(false).setTitle(
 					Html.fromHtml("<b>Intramural Review Page</b>")).
 					setMessage(finalDetailString).setNeutralButton("Close", 
@@ -298,6 +302,13 @@ public class ListActivity extends Activity {
 							/* onclick closes the dialog by default, unless code is
 							 * added here
 							 */
+						}
+					}).setPositiveButton("Reserve It!", 
+							new OnClickListener() {
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+
 						}
 					}).setView(mapURL);	// add link at the bottom
 			break;
@@ -316,10 +327,11 @@ public class ListActivity extends Activity {
 	 * game.
 	 * @param gameIndex - Signifies which game (index) was chosen
 	 */
-	public void showDetails(int gameIndex) {
+	@SuppressWarnings("deprecation")
+	public void showDetails() {
 
 		// get the corresponding object for the desired game
-		JSONObject selectedGame = GameObjects[gameIndex];
+		JSONObject selectedGame = GameObjects[inquiredGame];
 
 		//set up the information variables
 		try {
@@ -332,18 +344,17 @@ public class ListActivity extends Activity {
 			sportType = selectedGame.getString("sport");
 
 			date = selectedGame.getString("date");
-			
+
 			// format the date
 			date = FormatDate(date);
-			
+
 
 			remainingSeats = selectedGame.getInt("seatsLeft");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
-		// format the resulting info string
-		//finalDetailString = Html.fromHtml(source, imageGetter, tagHandler);
+		// format the resulting info string using HTML :) (New skill acquired)
 		finalDetailString = Html.fromHtml(
 				"<img src=img_" + homeTeam + ">\t\t" + 
 						"<b>V.S</b>\t\t" +
@@ -361,15 +372,17 @@ public class ListActivity extends Activity {
 						int path =
 								ListActivity.this.getResources().getIdentifier(source, "drawable",
 										"com.dunksoftware.seminoletix");
-						drawFromPath = (Drawable) ListActivity.this.getResources().getDrawable(path);
-						drawFromPath.setBounds(0, 0, drawFromPath.getIntrinsicWidth(),
+						drawFromPath = (Drawable) ListActivity.this.getResources()
+								.getDrawable(path);
+
+						drawFromPath.setBounds(0, 0, 
+								drawFromPath.getIntrinsicWidth(),
 								drawFromPath.getIntrinsicHeight());
+
 						return drawFromPath;
 					}
-				}, null);// link to map of stadium 
+				}, null);// link to map of game arena
 		showDialog(DETAILS_POPUP);
-
-		// then call showdialog
 	}
 
 	/**
@@ -386,7 +399,10 @@ public class ListActivity extends Activity {
 
 			Button btn_viewGame = (Button)v;
 
-			showDetails( btn_viewGame.getId());
+			// find out which list array element was inquired about and set it
+			inquiredGame = btn_viewGame.getId();
+
+			showDetails();
 		}
 	}
 
