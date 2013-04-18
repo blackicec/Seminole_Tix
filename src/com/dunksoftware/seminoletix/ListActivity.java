@@ -106,7 +106,6 @@ public class ListActivity extends Activity {
 								Toast.makeText(getApplicationContext(), 
 										"You are not logged in.", Toast.LENGTH_LONG)
 										.show();
-								finish();
 							}
 
 							finish();
