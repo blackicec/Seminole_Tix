@@ -113,6 +113,11 @@ public class LoginActivity extends Activity {
 
 										//finish();
 									}
+									// If the user is already logged in, just go back to the list.
+									else if( JSONresponse.getString("success").equals("false") && 
+												JSONresponse.getString("message").equals("Already logged in.")) {
+										startActivity(new Intent(getApplicationContext(), ListActivity.class));
+									}
 									/* if server returns false on registration, clear the CardNumber
 									 * and PIN field
 									 */
